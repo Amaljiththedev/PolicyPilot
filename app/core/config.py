@@ -29,10 +29,16 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
+    @property
+    def database_url(self) -> str:
+        return self.DATABASE_URL
+
+
 
 settings = Settings()
 
 
 def get_settings() -> Settings:
     return settings
+
 
