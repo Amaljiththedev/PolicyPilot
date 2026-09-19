@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     # RAG Configuration
     CHUNK_SIZE: int = 1000
     TOP_K: int = 5
+    EMBEDDING_DIMENSION: int = 1536
 
     # Security
     JWT_SECRET: str = "supersecretjwtkey_change_in_production"
@@ -30,3 +31,8 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+
+def get_settings() -> Settings:
+    return settings
+
