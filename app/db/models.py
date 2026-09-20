@@ -1,3 +1,4 @@
+from sqlalchemy import Index
 from datetime import datetime, timezone
 from typing import Optional, List
 from sqlalchemy import String, Text, Integer, Boolean, DateTime, ForeignKey, JSON
@@ -49,6 +50,17 @@ class Chunk(Base):
     metadata_json: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
 
     document: Mapped["Document"] = relationship("Document", back_populates="chunks")
+
+    __table_args__ = (
+        Index("ix_chunks_document_id", "document_id"),
+        Index(
+            "ix_chunks_embedding_hnsw",
+            "embedding",
+            postgresql_using="hnsw",
+            postgresql_with={"m": 16, "ef_construction": 64},
+            postgresql_ops={"embedding": "vector_cosine_ops"},
+        ),
+    )
 
 
 class Query(Base):

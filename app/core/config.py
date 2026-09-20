@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     CHUNK_SIZE: int = 1000
     TOP_K: int = 5
     EMBEDDING_DIMENSION: int = 1536
+    HNSW_M: int = 16
+    HNSW_EF_CONSTRUCTION: int = 64
+
 
     # Security
     JWT_SECRET: str = "supersecretjwtkey_change_in_production"
