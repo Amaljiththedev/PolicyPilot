@@ -17,7 +17,7 @@ def clear_model_cache():
 @patch.object(embeddings_module, "SentenceTransformer")
 def test_dimension_mismatch_raises(mock_st_cls):
     mock_model = MagicMock()
-    mock_model.get_sentence_embedding_dimension.return_value = settings.EMBEDDING_DIMENSION + 1
+    mock_model.get_embedding_dimension.return_value = settings.EMBEDDING_DIMENSION + 1
     mock_st_cls.return_value = mock_model
 
     with pytest.raises(embeddings_module.EmbeddingDimensionMismatch):
@@ -27,7 +27,7 @@ def test_dimension_mismatch_raises(mock_st_cls):
 @patch.object(embeddings_module, "SentenceTransformer")
 def test_warm_up_loads_model(mock_st_cls):
     mock_model = MagicMock()
-    mock_model.get_sentence_embedding_dimension.return_value = settings.EMBEDDING_DIMENSION
+    mock_model.get_embedding_dimension.return_value = settings.EMBEDDING_DIMENSION
     mock_st_cls.return_value = mock_model
 
     embeddings_module.warm_up()

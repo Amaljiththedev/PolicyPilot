@@ -32,7 +32,7 @@ def get_model() -> SentenceTransformer:
     logger.info("loading embedding model %s", settings.EMBEDDING_MODEL)
     model = SentenceTransformer(settings.EMBEDDING_MODEL)
 
-    actual = model.get_sentence_embedding_dimension()
+    actual = model.get_embedding_dimension()
     if actual != settings.EMBEDDING_DIMENSION:
         raise EmbeddingDimensionMismatch(
             f"{settings.EMBEDDING_MODEL} produces {actual}-dimensional vectors, "

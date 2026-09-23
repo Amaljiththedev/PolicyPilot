@@ -3,7 +3,7 @@ import pytest
 from docx import Document as DocxDocument
 from pypdf import PdfWriter
 
-from app.api.ingestion.praser import (
+from app.api.ingestion.parser import (
     extract_text,
     UnsupportedFileType,
     EmptyDocument,

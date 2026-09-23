@@ -38,6 +38,9 @@ class Document(Base):
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
     status: Mapped[str] = mapped_column(String(32), default="processing")  # processing, ready, failed
+    file_hash: Mapped[str] = mapped_column(String(64), unique=True, index=True, nullable=False)
+    uploaded_by: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    chunk_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
     chunks: Mapped[List["Chunk"]] = relationship("Chunk", back_populates="document", cascade="all, delete-orphan")
 

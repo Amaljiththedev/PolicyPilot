@@ -7,7 +7,7 @@ from app.api.deps import get_db, get_current_user
 from app.api.services.chunking import chunk_text
 from app.api.services.embeddings import embed_texts, EmbeddingError
 from app.db.models import Chunk, Document, User
-from app.ingestion.parser import (
+from app.api.ingestion.parser import (
     extract_text, UnsupportedFileType, EmptyDocument, CorruptDocument,
 )
 from app.schemas.document import DocumentRead
@@ -51,14 +51,19 @@ def upload_document(                      # plain def: embedding is CPU-heavy, r
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "no chunks produced")
     try:
         vectors = embed_texts(chunks)
+        if len(vectors) != len(chunks):
+            raise EmbeddingError(f"got {len(vectors)} vectors for {len(chunks)} chunks")
     except EmbeddingError as e:
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, f"embedding failed: {e}")
 
     # 5. one transaction: document + all chunks, or nothing
     try:
         doc = Document(
+            title=file.filename,
             filename=file.filename,
-            content_type=file.content_type,
+            content_type=file.content_type or "application/octet-stream",
+            raw_text=text,
+            status="ready",
             file_hash=file_hash,
             uploaded_by=current_user.id,
             chunk_count=len(chunks),
@@ -67,7 +72,7 @@ def upload_document(                      # plain def: embedding is CPU-heavy, r
         db.flush()  # assigns doc.id without committing
 
         db.add_all([
-            Chunk(document_id=doc.id, chunk_index=i, content=c, embedding=v)
+            Chunk(document_id=doc.id, chunk_index=i, text=c, embedding=v)
             for i, (c, v) in enumerate(zip(chunks, vectors))
         ])
         db.commit()
