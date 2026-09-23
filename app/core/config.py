@@ -17,8 +17,15 @@ class Settings(BaseSettings):
 
     # RAG Configuration
     CHUNK_SIZE: int = 1000
+    CHUNK_OVERLAP: int = 200
+    CHUNK_STRATEGY: str = "recursive"
     TOP_K: int = 5
-    EMBEDDING_DIMENSION: int = 1536
+    EMBEDDING_MODEL: str = "BAAI/bge-small-en-v1.5"
+    EMBEDDING_DIMENSION: int = 384
+    EMBEDDING_BATCH_SIZE: int = 32
+    EMBEDDING_QUERY_PREFIX: str = (
+        "Represent this sentence for searching relevant passages: "
+    )
     HNSW_M: int = 16
     HNSW_EF_CONSTRUCTION: int = 64
 
