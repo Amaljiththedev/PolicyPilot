@@ -27,7 +27,7 @@ def upload_document(                      # plain def: embedding is CPU-heavy, r
 
     # 1. cheap checks first
     if not content:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "file is empty")
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "file is empty")
     if len(content) > MAX_UPLOAD_BYTES:
         raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, "file too large (max 20 MB)")
 
@@ -43,12 +43,12 @@ def upload_document(                      # plain def: embedding is CPU-heavy, r
     except UnsupportedFileType as e:
         raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, str(e))
     except (EmptyDocument, CorruptDocument) as e:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(e))
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(e))
 
     # 4. chunk + embed
     chunks = chunk_text(text)
     if not chunks:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "no chunks produced")
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "no chunks produced")
     try:
         vectors = embed_texts(chunks)
         if len(vectors) != len(chunks):

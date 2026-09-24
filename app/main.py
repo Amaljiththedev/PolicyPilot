@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import health, auth
 from app.api.services.embeddings import warm_up
 from app.api.routes import document_upload
-
+from app.api.routes import search
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     warm_up()
@@ -33,7 +33,7 @@ app.add_middleware(
 app.include_router(health.router, prefix="/api/v1")
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(document_upload.router, prefix="/api/v1")
-
+app.include_router(search.router, prefix="/api/v1")
 
 @app.get("/")
 def root():

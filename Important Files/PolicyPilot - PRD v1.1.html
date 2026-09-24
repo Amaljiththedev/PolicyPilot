@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PolicyPilot PRD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --paper:#F5F7F6; --surface:#FFFFFF; --ink:#14202E; --ink-2:#3C4B57; --muted:#667781;
+  --line:#DCE3E1; --accent:#0F766E; --accent-soft:#E2F1EF; --amber:#B45309; --amber-soft:#FBEFDF;
+  --done:#15803D; --done-soft:#E3F3E8; --next:#0F766E; --later:#8A96A0; --later-soft:#EEF1F3;
+  --code-bg:#EEF2F1;
+  --display:"Sora", "Segoe UI", system-ui, sans-serif;
+  --body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F161C; --surface:#162029; --ink:#E6ECEF; --ink-2:#B9C5CC; --muted:#8C9AA3;
+    --line:#26333D; --accent:#3CC2B3; --accent-soft:#12302E; --amber:#F0A95B; --amber-soft:#33250F;
+    --done:#4ADE80; --done-soft:#12291B; --next:#3CC2B3; --later:#7B8A94; --later-soft:#1C2730;
+    --code-bg:#1B2731; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F161C; --surface:#162029; --ink:#E6ECEF; --ink-2:#B9C5CC; --muted:#8C9AA3;
+  --line:#26333D; --accent:#3CC2B3; --accent-soft:#12302E; --amber:#F0A95B; --amber-soft:#33250F;
+  --done:#4ADE80; --done-soft:#12291B; --next:#3CC2B3; --later:#7B8A94; --later-soft:#1C2730;
+  --code-bg:#1B2731; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:220px minmax(0,1fr);gap:48px}
+@media (max-width:900px){.wrap{grid-template-columns:minmax(0,1fr)} nav.toc{display:none}}
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;padding-top:40px;font-size:14px}
+nav.toc p{font-family:var(--display);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+nav.toc a{display:block;color:var(--ink-2);text-decoration:none;padding:4px 0 4px 12px;border-left:2px solid var(--line)}
+nav.toc a:hover,nav.toc a:focus-visible{color:var(--accent);border-left-color:var(--accent);outline:none}
+main{min-width:0}
+header.hero{padding-block:48px 28px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 12px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,5vw,52px);line-height:1.08;letter-spacing:-.02em;margin:0 0 16px;text-wrap:balance}
+.lede{font-size:20px;color:var(--ink-2);max-width:62ch;margin:0 0 24px}
+.meta{display:flex;flex-wrap:wrap;gap:10px 28px;font-size:14px;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600;display:block;font-size:15px}
+section{padding-block:40px 8px;border-bottom:1px solid var(--line)}
+section:last-of-type{border-bottom:0}
+h2{font-family:var(--display);font-weight:600;font-size:28px;letter-spacing:-.01em;margin:0 0 6px;text-wrap:balance}
+h2 + .sub{color:var(--muted);margin:0 0 22px;max-width:65ch}
+h3{font-family:var(--display);font-weight:600;font-size:19px;margin:28px 0 8px}
+p{max-width:68ch;margin:0 0 14px}
+ul.plain{max-width:68ch;padding-left:20px;margin:0 0 16px}
+ul.plain li{margin-bottom:6px}
+code{font-family:var(--mono);font-size:.86em;background:var(--code-bg);padding:1px 6px;border-radius:4px}
+.callout{background:var(--accent-soft);border-radius:10px;padding:18px 22px;margin:18px 0 22px;max-width:72ch}
+.callout.warn{background:var(--amber-soft)}
+.callout strong{display:block;font-family:var(--display);font-size:15px;margin-bottom:4px}
+.callout p{margin:0}
+.pitch{font-family:var(--display);font-size:clamp(20px,2.6vw,25px);line-height:1.4;font-weight:500;max-width:34ch;margin:8px 0 18px;text-wrap:balance}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:10px 0 20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.card h4{font-family:var(--display);font-size:16px;margin:0 0 6px}
+.card p{font-size:15.5px;color:var(--ink-2);margin:0}
+.tablewrap{overflow-x:auto;margin:10px 0 22px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:15px;min-width:560px}
+th{font-family:var(--display);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;padding:12px 14px;border-bottom:1px solid var(--line)}
+td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.id{font-family:var(--mono);font-size:13px;color:var(--muted);white-space:nowrap}
+td.num{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.must{background:var(--ink);color:var(--paper)}
+.should{background:var(--accent-soft);color:var(--accent)}
+.st-done{background:var(--done-soft);color:var(--done)}
+.st-now{background:var(--accent);color:var(--paper)}
+.st-later{background:var(--later-soft);color:var(--later)}
+.new{background:var(--amber-soft);color:var(--amber)}
+.diagram{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;margin:12px 0 8px;overflow-x:auto}
+.diagram pre.mermaid{margin:0;background:transparent;text-align:center}
+.caption{font-size:14px;color:var(--muted);margin:6px 0 22px;max-width:70ch}
+/* roadmap */
+.road{list-style:none;padding:0;margin:14px 0 24px;display:grid;gap:10px}
+.road li{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:14px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.road li.done{opacity:.92}
+.road li.now{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.road .ph{font-family:var(--mono);font-size:13px;color:var(--muted);padding-top:2px}
+.road h4{font-family:var(--display);font-size:16px;margin:0 0 3px}
+.road p{font-size:15px;color:var(--ink-2);margin:0}
+.road .gate{font-size:13.5px;color:var(--muted);margin-top:6px}
+.road .gate b{color:var(--ink-2)}
+@media (max-width:560px){.road li{grid-template-columns:minmax(0,1fr)} .road .ph{padding:0}}
+.qa{margin:0 0 18px;max-width:70ch}
+.qa dt{font-weight:700;margin-bottom:4px}
+.qa dd{margin:0 0 16px;color:var(--ink-2)}
+.gloss{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:4px 24px;margin:8px 0 22px}
+.gloss div{padding:10px 0;border-bottom:1px solid var(--line)}
+.gloss b{font-family:var(--display);font-size:15px}
+.gloss span{display:block;font-size:15px;color:var(--ink-2)}
+.check{list-style:none;padding:0;max-width:70ch}
+.check li{padding:8px 0 8px 30px;position:relative;border-bottom:1px solid var(--line)}
+.check li::before{content:"";position:absolute;left:4px;top:13px;width:14px;height:14px;border:2px solid var(--muted);border-radius:3px}
+footer{color:var(--muted);font-size:14px;padding-top:28px}
+a{color:var(--accent)}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <p>Contents</p>
+  <a href="#pitch">In one minute</a>
+  <a href="#problem">The problem</a>
+  <a href="#what">What it does</a>
+  <a href="#how">How it works</a>
+  <a href="#features">Features</a>
+  <a href="#integrations">Slack &amp; Drive</a>
+  <a href="#measure">How we prove it</a>
+  <a href="#targets">Targets</a>
+  <a href="#roadmap">Roadmap</a>
+  <a href="#scope">Out of scope</a>
+  <a href="#stack">Tech stack</a>
+  <a href="#risks">Risks</a>
+  <a href="#done">Definition of done</a>
+  <a href="#explain">Explaining it</a>
+  <a href="#glossary">Glossary</a>
+</nav>
+
+<main>
+<header class="hero">
+  <p class="eyebrow">Product requirements · v1.1</p>
+  <h1>PolicyPilot</h1>
+  <p class="lede">Ask your company's policies a question in plain English. Get an answer that points to the exact paragraph it came from — or an honest "I don't know, here's a human who does."</p>
+  <div class="meta">
+    <div><b>Owner</b>Amaljith T A</div>
+    <div><b>Version</b>1.1 — adds Slack &amp; Google Drive</div>
+    <div><b>Updated</b>23 Sep 2026</div>
+    <div><b>Status</b>Phases 1–4 complete · Phase 5 in progress</div>
+  </div>
+</header>
+
+<section id="pitch">
+  <h2>In one minute</h2>
+  <p class="sub">If you only read one section, read this one.</p>
+  <p class="pitch">An assistant that answers questions from company documents, shows its sources, refuses to guess, and always uses the latest version of a policy.</p>
+  <div class="grid2">
+    <div class="card"><h4>Grounded</h4><p>Every answer cites the document and the passage it came from. No citation, no answer.</p></div>
+    <div class="card"><h4>Honest</h4><p>When the documents don't contain the answer, it says so and hands the question to a person instead of making something up.</p></div>
+    <div class="card"><h4>Current</h4><p>When a policy is replaced, answers come from the new version, and it can tell you what changed.</p></div>
+    <div class="card"><h4>Measured</h4><p>Quality is proven with numbers from an automatic test harness that runs on every code change — not with "it seems to work".</p></div>
+  </div>
+</section>
+
+<section id="problem">
+  <h2>The problem</h2>
+  <p class="sub">Why this is worth building.</p>
+  <p>Companies keep their rules in long documents — the staff handbook, the leave policy, the expenses policy — that almost nobody reads start to finish. So the same questions get asked again and again ("How many days of leave do I get?", "Can I expense a taxi after 9pm?"), they get answered inconsistently, and often they get answered from an old version of the document that was replaced months ago.</p>
+  <p>The real cost isn't the time spent answering. It's the decisions people make based on wrong or outdated information.</p>
+  <p>A general chatbot doesn't fix this. It has never seen your documents, and even when you give them to it, it will still produce a confident, fluent answer when the documents don't actually say anything. For an assistant like this to be trusted, two things must be true: <strong>every answer can be traced to a source</strong>, and <strong>the system is willing to say "I don't know."</strong></p>
+</section>
+
+<section id="what">
+  <h2>What it does</h2>
+  <p class="sub">The experience, from the user's side.</p>
+  <div class="grid2">
+    <div class="card"><h4>1 · HR adds policies</h4><p>Upload a PDF, Word, HTML or text file — or, later, just drop it in a shared Google Drive folder.</p></div>
+    <div class="card"><h4>2 · Staff ask questions</h4><p>Through the API, or later directly in Slack: "How many days of annual leave do I get?"</p></div>
+    <div class="card"><h4>3 · They get a cited answer</h4><p>"25 days per year [Leave Policy v3, §2.1]." One click shows the exact paragraph.</p></div>
+    <div class="card"><h4>4 · Or an honest handoff</h4><p>"The policies don't cover parking. I've passed this to @HR." The question isn't lost.</p></div>
+  </div>
+</section>
+
+<section id="how">
+  <h2>How it works</h2>
+  <p class="sub">Two separate journeys that meet in the database.</p>
+
+  <h3>The big picture</h3>
+  <div class="diagram"><pre class="mermaid">
+flowchart LR
+  subgraph IN[Documents come in]
+    U[Upload API]
+    D[Google Drive folder]
+  end
+  subgraph WRITE[Write path — once per document]
+    P[Parse<br/>extract text] --> C[Chunk<br/>split into passages] --> E[Embed<br/>turn into vectors]
+  end
+  DB[(PostgreSQL<br/>+ pgvector)]
+  subgraph READ[Read path — once per question]
+    Q[Question] --> S[Search<br/>hybrid + re-rank] --> A[Agent<br/>answer or escalate]
+  end
+  subgraph OUT[Answers go out]
+    API[API response]
+    SL[Slack thread]
+  end
+  U --> P
+  D --> P
+  E --> DB
+  DB --> S
+  A --> API
+  A --> SL
+  </pre></div>
+  <p class="caption">Ingestion can happen weeks before anyone asks anything. Keeping the two paths separate means we can re-chunk or re-embed every document without touching the question-answering code.</p>
+
+  <h3>The write path: getting a document in</h3>
+  <p>When a document arrives, four things happen in order. If any step fails, nothing is saved — the document and all its pieces go in together or not at all.</p>
+  <div class="diagram"><pre class="mermaid">
+flowchart LR
+  F[File<br/>PDF · DOCX · HTML · TXT] --> V{Valid?<br/>type, size,<br/>duplicate}
+  V -- no --> X[Clear error<br/>409 · 413 · 415 · 422]
+  V -- yes --> P[Parse<br/>raw text, keep<br/>paragraph breaks]
+  P --> C[Chunk<br/>~800 chars,<br/>100 overlap]
+  C --> E[Embed<br/>bge-small, 384<br/>numbers per chunk]
+  E --> T[(One transaction:<br/>document + chunks)]
+  </pre></div>
+  <ul class="plain">
+    <li><strong>Parse</strong> — pull the plain text out of the file. Scanned PDFs with no text layer are rejected loudly rather than stored empty.</li>
+    <li><strong>Chunk</strong> — split the text into passages, preferring to break at paragraphs, then sentences. Neighbouring chunks overlap slightly so an idea that sits on a boundary isn't cut in half.</li>
+    <li><strong>Embed</strong> — turn each chunk into a list of 384 numbers that captures its meaning. Passages about similar things end up close together, so "holiday" can find "annual leave".</li>
+    <li><strong>Store</strong> — save everything in PostgreSQL, with a special index (HNSW) that makes "find the closest passages" fast even with many thousands of chunks.</li>
+  </ul>
+
+  <h3>The read path: answering a question</h3>
+  <p>The answering step is an <em>agent</em>: instead of searching once and hoping, the model decides what to do next, from a small set of tools, for a limited number of rounds.</p>
+  <div class="diagram"><pre class="mermaid">
+sequenceDiagram
+  actor User
+  participant Agent
+  participant Search as search_documents
+  participant Doc as get_document
+  participant HR as escalate_to_human
+  User->>Agent: "Can I carry over unused leave?"
+  Agent->>Search: leave carry-over rules
+  Search-->>Agent: top passages + scores
+  Agent->>Search: carry-over limit for part-time staff
+  Search-->>Agent: more passages
+  alt Answer is in the documents
+    Agent-->>User: Answer + citations [Leave Policy v3 §4.2]
+  else Nothing solid found
+    Agent->>HR: hand over the question
+    Agent-->>User: "The policies don't say. I've asked HR."
+  end
+  </pre></div>
+  <p class="caption">The number of rounds is capped, so the agent can never loop forever or run up cost. Every question, answer, and the chunks used are logged for evaluation and debugging.</p>
+
+  <h3>Supersession: always the current version</h3>
+  <p>Policies change. When Leave Policy v3 replaces v2, old passages must stop appearing in answers — but they aren't deleted, because "what changed?" is a useful question too.</p>
+  <div class="diagram"><pre class="mermaid">
+flowchart LR
+  V2[Leave Policy v2<br/>20 days] -- superseded_by --> V3[Leave Policy v3<br/>25 days]
+  Q[Question:<br/>How much leave?] --> S{Search}
+  S -- current --> V3
+  S -. excluded or down-weighted .-> V2
+  V3 --> A["Answer: 25 days.<br/>(Changed from 20 in v2.)"]
+  </pre></div>
+</section>
+
+<section id="features">
+  <h2>Features</h2>
+  <p class="sub">What the system must do. <span class="pill must">MUST</span> items block release; <span class="pill should">SHOULD</span> items can be dropped only with a written note explaining the trade.</p>
+
+  <h3>Ingestion</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>ID</th><th>Priority</th><th>Requirement</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td class="id">FR-1</td><td><span class="pill must">MUST</span></td><td>Accept PDF, DOCX, HTML and plain-text uploads through an authenticated endpoint.</td><td><span class="pill st-done">Done</span></td></tr>
+      <tr><td class="id">FR-2</td><td><span class="pill must">MUST</span></td><td>Extract text; unsupported, empty or corrupt files fail with a specific error (415 / 422), never a crash.</td><td><span class="pill st-done">Done</span></td></tr>
+      <tr><td class="id">FR-3</td><td><span class="pill must">MUST</span></td><td>Chunking strategy chosen by configuration, not hardcoded.</td><td><span class="pill st-done">Done</span></td></tr>
+      <tr><td class="id">FR-4</td><td><span class="pill must">MUST</span></td><td>Embed every chunk locally; a failed step never leaves a half-saved document (single transaction).</td><td><span class="pill st-done">Done</span></td></tr>
+      <tr><td class="id">FR-5</td><td><span class="pill must">MUST</span></td><td>Store chunks and vectors in PostgreSQL with an HNSW cosine index.</td><td><span class="pill st-done">Done</span></td></tr>
+      <tr><td class="id">FR-6</td><td><span class="pill must">MUST</span></td><td>Detect duplicate uploads by file hash (409).</td><td><span class="pill st-done">Done</span></td></tr>
+      <tr><td class="id">FR-7</td><td><span class="pill must">MUST</span></td><td>Store version metadata per document: effective date, version label, and which document supersedes it.</td><td><span class="pill st-later">Phase 9</span></td></tr>
+      <tr><td class="id">FR-8</td><td><span class="pill should">SHOULD</span></td><td>Three chunking strategies to compare: fixed-window, recursive, structure-aware (headings and clauses).</td><td><span class="pill st-later">Phase 7</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Retrieval</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>ID</th><th>Priority</th><th>Requirement</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td class="id">FR-9</td><td><span class="pill must">MUST</span></td><td>Semantic search returning a configurable top-k with similarity scores.</td><td><span class="pill st-now">Now</span></td></tr>
+      <tr><td class="id">FR-10</td><td><span class="pill must">MUST</span></td><td>Hybrid search: keyword (BM25-style) plus vector, merged with reciprocal rank fusion, so exact terms like clause numbers aren't lost.</td><td><span class="pill st-later">Phase 7</span></td></tr>
+      <tr><td class="id">FR-11</td><td><span class="pill must">MUST</span></td><td>Cross-encoder re-ranking of a wider candidate set down to the final few.</td><td><span class="pill st-later">Phase 7</span></td></tr>
+      <tr><td class="id">FR-12</td><td><span class="pill must">MUST</span></td><td>Superseded documents are excluded or down-weighted; answers say what changed when it matters.</td><td><span class="pill st-later">Phase 9</span></td></tr>
+      <tr><td class="id">FR-13</td><td><span class="pill should">SHOULD</span></td><td>Split multi-part questions into sub-questions and search for each.</td><td><span class="pill st-later">Phase 8</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Answering</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>ID</th><th>Priority</th><th>Requirement</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td class="id">FR-14</td><td><span class="pill must">MUST</span></td><td>A tool-calling agent with at least three tools — search, fetch a document, escalate to a human — and a configurable cap on rounds.</td><td><span class="pill st-later">Phase 8</span></td></tr>
+      <tr><td class="id">FR-15</td><td><span class="pill must">MUST</span></td><td>Every answer cites the source document and passage.</td><td><span class="pill st-later">Phase 8</span></td></tr>
+      <tr><td class="id">FR-16</td><td><span class="pill must">MUST</span></td><td>No grounded answer → say so and escalate. Never an unsupported answer.</td><td><span class="pill st-later">Phase 8</span></td></tr>
+      <tr><td class="id">FR-17</td><td><span class="pill must">MUST</span></td><td>Text inside uploaded documents is treated as content, never as instructions (prompt-injection resistance).</td><td><span class="pill st-later">Phase 8</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Logging, feedback &amp; security</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>ID</th><th>Priority</th><th>Requirement</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td class="id">FR-18</td><td><span class="pill must">MUST</span></td><td>Log every question: answer, chunks used, top score, whether it escalated, latency, token cost.</td><td><span class="pill st-later">Phase 8</span></td></tr>
+      <tr><td class="id">FR-19</td><td><span class="pill must">MUST</span></td><td>Accept thumbs-up/down feedback linked to a specific logged question.</td><td><span class="pill st-later">Phase 8</span></td></tr>
+      <tr><td class="id">FR-20</td><td><span class="pill must">MUST</span></td><td>JWT bearer authentication on every route except health; missing, bad or expired tokens → 401. Admin-only routes → 403.</td><td><span class="pill st-done">Done</span></td></tr>
+      <tr><td class="id">FR-21</td><td><span class="pill must">MUST</span></td><td>Unauthenticated health endpoint for monitoring.</td><td><span class="pill st-done">Done</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="integrations">
+  <h2>Slack &amp; Google Drive <span class="pill new">NEW in v1.1</span></h2>
+  <p class="sub">Two integrations, each chosen because it makes an existing core feature real — not to add breadth for its own sake.</p>
+
+  <div class="callout">
+    <strong>The rule for integrations</strong>
+    <p>An integration earns its place only if it strengthens a core feature. Drive makes <em>supersession</em> automatic. Slack makes <em>escalation</em> reach a real person. Anything else (Teams, email, Notion, indexing everyone's messages) stays out.</p>
+  </div>
+
+  <h3>Google Drive — policies stay up to date by themselves</h3>
+  <p>HR already keeps policies in a shared Drive folder. PolicyPilot watches that one folder. When a file is added, it's ingested. When a file is edited, the new version is ingested and the old one is marked as superseded. When a file is deleted, its chunks stop appearing in answers.</p>
+  <div class="diagram"><pre class="mermaid">
+flowchart LR
+  HR[HR edits<br/>Leave Policy] --> G[Google Drive<br/>policy folder]
+  G -- change detected --> J[(Job queue)]
+  J --> W[Worker]
+  W --> CH{What changed?}
+  CH -- new file --> ING[Ingest]
+  CH -- edited --> NV[Ingest new version<br/>mark old superseded]
+  CH -- deleted --> RM[Retire chunks]
+  ING --> DB[(Database)]
+  NV --> DB
+  RM --> DB
+  </pre></div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>ID</th><th>Priority</th><th>Requirement</th></tr></thead>
+    <tbody>
+      <tr><td class="id">FR-32</td><td><span class="pill must">MUST</span></td><td>Connect one Google Drive folder with read-only OAuth; tokens stored encrypted, never logged.</td></tr>
+      <tr><td class="id">FR-33</td><td><span class="pill must">MUST</span></td><td>Sync is incremental: only new, changed or deleted files are processed, tracked by a sync cursor.</td></tr>
+      <tr><td class="id">FR-34</td><td><span class="pill must">MUST</span></td><td>Re-ingesting the same file version is a no-op (idempotent — file hash check).</td></tr>
+      <tr><td class="id">FR-35</td><td><span class="pill must">MUST</span></td><td>An edited file creates a new document version and supersedes the old one automatically.</td></tr>
+      <tr><td class="id">FR-36</td><td><span class="pill must">MUST</span></td><td>Sync runs in a background worker, never inside a user's request; failures retry with backoff.</td></tr>
+      <tr><td class="id">FR-37</td><td><span class="pill should">SHOULD</span></td><td>Push notifications (Drive webhooks) instead of polling, so changes are searchable within a minute.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Slack — ask where you already work</h3>
+  <p>Staff mention the bot in a channel or DM it. It answers in the thread with citations. When it can't find a grounded answer, it tags a named HR contact in the same thread — so escalation actually reaches a human instead of dying in a log.</p>
+  <div class="diagram"><pre class="mermaid">
+sequenceDiagram
+  actor Emp as Employee
+  participant Slack
+  participant PP as PolicyPilot
+  actor HR as HR contact
+  Emp->>Slack: @PolicyPilot can I expense a taxi after 9pm?
+  Slack->>PP: event (verified signature)
+  PP->>PP: same /ask pipeline
+  alt grounded answer
+    PP-->>Slack: "Yes, up to £40 [Expenses Policy §5.3]"
+  else no grounded answer
+    PP-->>Slack: "The policies don't cover this."
+    PP->>Slack: tag @HR in the thread
+    HR-->>Emp: answers in thread
+  end
+  </pre></div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>ID</th><th>Priority</th><th>Requirement</th></tr></thead>
+    <tbody>
+      <tr><td class="id">FR-38</td><td><span class="pill must">MUST</span></td><td>Slack bot answers mentions and DMs in-thread, using the same answering pipeline as the API — no separate logic.</td></tr>
+      <tr><td class="id">FR-39</td><td><span class="pill must">MUST</span></td><td>Every Slack request's signature is verified; unsigned or replayed requests are rejected.</td></tr>
+      <tr><td class="id">FR-40</td><td><span class="pill must">MUST</span></td><td>Answers show citations as readable references to the source document and section.</td></tr>
+      <tr><td class="id">FR-41</td><td><span class="pill must">MUST</span></td><td>Escalation tags a configured HR contact in the thread and is recorded on the logged question.</td></tr>
+      <tr><td class="id">FR-42</td><td><span class="pill must">MUST</span></td><td>Slack's 3-second acknowledgement limit is respected: acknowledge immediately, answer asynchronously.</td></tr>
+      <tr><td class="id">FR-43</td><td><span class="pill should">SHOULD</span></td><td>👍 / 👎 reactions on an answer are stored as feedback against that question.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout warn">
+    <strong>Deliberately not included</strong>
+    <p>Slack is an <em>interface</em>, not a data source. PolicyPilot does not read or index anyone's Slack messages. That would bring in personal data, noisy chat, and a permissions problem that belongs to a different product.</p>
+  </div>
+</section>
+
+<section id="measure">
+  <h2>How we prove it works</h2>
+  <p class="sub">The rule that governs this project: quality is shown with numbers, not claims. A feature that works but isn't measured isn't finished.</p>
+
+  <div class="diagram"><pre class="mermaid">
+flowchart LR
+  GS[Golden set<br/>60+ labelled questions] --> H[Eval harness]
+  SYS[PolicyPilot<br/>current code] --> H
+  H --> R[Retrieval scores<br/>recall@k · MRR]
+  H --> G[Answer scores<br/>faithfulness · relevancy]
+  H --> AB[Honesty scores<br/>false answer rate]
+  R --> CI{CI gate}
+  G --> CI
+  AB --> CI
+  CI -- recall@5 drops > 2 pts --> F[Pull request fails]
+  CI -- ok --> M[Merge]
+  </pre></div>
+
+  <h3>The golden set</h3>
+  <p>A hand-written list of at least 60 questions, each with the passage that should be found and a reference answer. It's split into slices, because a single average hides where things break:</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Slice</th><th>Example</th><th>What it tests</th></tr></thead>
+    <tbody>
+      <tr><td><b>Simple lookup</b></td><td>How many days of annual leave?</td><td>Basic retrieval</td></tr>
+      <tr><td><b>Multi-hop</b></td><td>Can a part-time contractor claim travel?</td><td>Combining two documents</td></tr>
+      <tr><td><b>Conditional</b></td><td>Can I work from abroad?</td><td>Answers with caveats</td></tr>
+      <tr><td><b>Superseded</b></td><td>What's the leave allowance? (v2 vs v3)</td><td>Using the current version</td></tr>
+      <tr><td><b>Unanswerable</b></td><td>What's the parking policy?</td><td>Saying "I don't know"</td></tr>
+      <tr><td><b>Adversarial</b> <span class="pill should">SHOULD</span></td><td>A document containing "ignore your instructions…"</td><td>Injection resistance</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>What gets measured</h3>
+  <div class="grid2">
+    <div class="card"><h4>Did we find the right passage?</h4><p><b>Recall@k</b> — was the right chunk in the top k results? <b>MRR</b> — how high up was it?</p></div>
+    <div class="card"><h4>Is the answer supported?</h4><p><b>Faithfulness</b> — every claim backed by a retrieved passage. <b>Relevancy</b> — it actually answers the question.</p></div>
+    <div class="card"><h4>Does it know when to stop?</h4><p><b>False answer rate</b> — how often it answers a question it should have refused. This is the headline number.</p></div>
+    <div class="card"><h4>Can we trust the judge?</h4><p>An LLM grades answers. We hand-label 40 items and report agreement (<b>MCC</b>) before trusting any judge score.</p></div>
+  </div>
+
+  <h3>The ablation table</h3>
+  <p>Each improvement (hybrid search, re-ranking, better chunking) is added one at a time, and measured against the baseline. Then each is removed from the full system. This shows exactly how much each piece contributes — and proves nothing was added just because it sounded impressive.</p>
+</section>
+
+<section id="targets">
+  <h2>Targets</h2>
+  <p class="sub">Release gates, not predictions. Baseline first; if a target is missed, report the real number and why rather than moving the goalpost.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Measure</th><th>Slice</th><th>Target</th></tr></thead>
+    <tbody>
+      <tr><td>Recall@5</td><td>All</td><td class="num">≥ 0.80</td></tr>
+      <tr><td>Recall@5</td><td>Multi-hop</td><td class="num">≥ 0.70</td></tr>
+      <tr><td>Mean reciprocal rank</td><td>All</td><td class="num">≥ 0.70</td></tr>
+      <tr><td>Faithfulness</td><td>Answerable</td><td class="num">≥ 0.85</td></tr>
+      <tr><td>Answer relevancy</td><td>Answerable</td><td class="num">≥ 0.75</td></tr>
+      <tr><td><b>False answer rate</b></td><td>Unanswerable</td><td class="num">≤ 0.05</td></tr>
+      <tr><td>Refusal recall</td><td>Unanswerable</td><td class="num">≥ 0.85</td></tr>
+      <tr><td>Current-version accuracy</td><td>Superseded</td><td class="num">≥ 0.90</td></tr>
+      <tr><td>Judge agreement (MCC)</td><td>Calibration set</td><td class="num">≥ 0.60</td></tr>
+      <tr><td>Drive change → searchable</td><td>Sync</td><td class="num">≤ 5 min</td></tr>
+      <tr><td>Latency</td><td>All</td><td class="num">p95 ≤ 5 s</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Non-functional requirements</h3>
+  <ul class="plain">
+    <li><b>Secrets</b> — no secret or OAuth token in the repo, the Docker image, or any log line.</li>
+    <li><b>Failures</b> — model, embedding, Drive or Slack failure returns a clean error, never a stack trace.</li>
+    <li><b>Cost</b> — runs entirely on free tiers: local embeddings and re-ranker, Groq free tier for answers, Gemini free tier for the judge. Token cost per question is still recorded.</li>
+    <li><b>Tests</b> — unit tests run without a database; integration tests run against the real stack.</li>
+    <li><b>Reproducible</b> — one command brings the whole stack up from a clean checkout.</li>
+  </ul>
+</section>
+
+<section id="roadmap">
+  <h2>Roadmap</h2>
+  <p class="sub">Each phase has a gate: the thing that must be true before moving on. Order matters — measurement comes before improvement, and core quality before integrations.</p>
+  <ol class="road">
+    <li class="done"><span class="ph">P1</span><div><h4>Foundation</h4><p>Project layout, config from environment, Docker Compose with Postgres + pgvector.</p></div><span class="pill st-done">Done</span></li>
+    <li class="done"><span class="ph">P2</span><div><h4>Database</h4><p>Users, documents, chunks, queries, feedback. HNSW cosine index on 384-dimension vectors.</p></div><span class="pill st-done">Done</span></li>
+    <li class="done"><span class="ph">P3</span><div><h4>Authentication</h4><p>bcrypt passwords, JWT tokens, 401 vs 403, admin role.</p></div><span class="pill st-done">Done</span></li>
+    <li class="done"><span class="ph">P4</span><div><h4>Ingestion</h4><p>Parser (4 formats), configurable chunker, local embeddings, <code>POST /documents</code> with duplicate detection. 42 tests passing.</p></div><span class="pill st-done">Done</span></li>
+    <li class="now"><span class="ph">P5</span><div><h4>Search</h4><p><code>POST /search</code>: embed the question, return top-k passages with scores. Collect golden-set questions while testing.</p><p class="gate"><b>Gate:</b> sensible results on real policy documents; 30+ golden questions written.</p></div><span class="pill st-now">Now</span></li>
+    <li><span class="ph">P6</span><div><h4>Measurement</h4><p>Eval harness: recall@k, MRR, per-slice reports. Baseline numbers recorded — no improvements yet.</p><p class="gate"><b>Gate:</b> baseline exists for every retrieval metric.</p></div><span class="pill st-later">Next</span></li>
+    <li><span class="ph">P7</span><div><h4>Retrieval quality</h4><p>Hybrid search, cross-encoder re-ranking, chunking comparison — each measured against the baseline.</p><p class="gate"><b>Gate:</b> ablation table filled in.</p></div><span class="pill st-later">Later</span></li>
+    <li><span class="ph">P8</span><div><h4>Answering agent</h4><p><code>POST /ask</code>: tool-calling agent, citations, escalation, question logging, feedback. Generation and honesty metrics added to the harness.</p><p class="gate"><b>Gate:</b> false answer rate measured; judge calibrated.</p></div><span class="pill st-later">Later</span></li>
+    <li><span class="ph">P9</span><div><h4>Supersession</h4><p>Document versions, current-version filtering, "what changed" answers.</p><p class="gate"><b>Gate:</b> superseded slice hits target.</p></div><span class="pill st-later">Later</span></li>
+    <li><span class="ph">P10</span><div><h4>Google Drive sync <span class="pill new">NEW</span></h4><p>OAuth, job queue, background worker, incremental sync, automatic supersession on edit.</p><p class="gate"><b>Gate:</b> editing a policy in Drive changes the answer within 5 minutes.</p></div><span class="pill st-later">Later</span></li>
+    <li><span class="ph">P11</span><div><h4>Slack bot <span class="pill new">NEW</span></h4><p>Answers in threads with citations, escalates by tagging HR, reactions as feedback.</p><p class="gate"><b>Gate:</b> a refused question reaches a real person in Slack.</p></div><span class="pill st-later">Later</span></li>
+    <li><span class="ph">P12</span><div><h4>Production &amp; write-up</h4><p>Deploy to AWS free tier, eval harness in CI as a merge gate, demo video, written report with the ablation table and what didn't work.</p><p class="gate"><b>Gate:</b> a deliberately worse commit fails CI.</p></div><span class="pill st-later">Later</span></li>
+  </ol>
+  <div class="callout warn">
+    <strong>The ordering rule</strong>
+    <p>Integrations (P10–P11) don't start until the harness has produced a baseline (P6). A fast pipeline feeding a search system nobody has measured is breadth without depth.</p>
+  </div>
+</section>
+
+<section id="scope">
+  <h2>Out of scope</h2>
+  <p class="sub">Excluded on purpose. Each would add work without adding evidence. Adding anything here requires removing something of similar size.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Excluded</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>Multi-tenancy / SaaS</b></td><td>Organisations, billing, per-customer OAuth. Proves infrastructure, not retrieval. Documented as future work instead.</td></tr>
+      <tr><td><b>Indexing Slack messages, email, personal files</b></td><td>A different product (personal knowledge search). Brings privacy and permission problems unrelated to policy Q&amp;A.</td></tr>
+      <tr><td><b>Microsoft Teams</b></td><td>Same value as Slack, much harder to test for free.</td></tr>
+      <tr><td><b>Multi-turn chat memory</b></td><td>The unit of value is one grounded answer. Memory adds a whole class of evaluation problems.</td></tr>
+      <tr><td><b>Polished web frontend</b></td><td>Slack and the API docs are the interfaces. UI work is unbounded.</td></tr>
+      <tr><td><b>CSV / spreadsheet ingestion</b></td><td>Tables are a different retrieval problem; character chunking breaks rows.</td></tr>
+      <tr><td><b>Knowledge graphs, GraphRAG, fine-tuning</b></td><td>Separate specialisms. Depth in retrieval beats breadth across techniques.</td></tr>
+      <tr><td><b>Streaming responses</b></td><td>Cosmetic at this stage.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="stack">
+  <h2>Tech stack</h2>
+  <p class="sub">Everything runs on free tiers or locally.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Layer</th><th>Choice</th><th>Why this one</th></tr></thead>
+    <tbody>
+      <tr><td>API</td><td>FastAPI, Pydantic v2</td><td>Typed request/response models, dependency injection for auth and DB sessions.</td></tr>
+      <tr><td>Database</td><td>PostgreSQL + pgvector</td><td>One database for records and vectors — joins for supersession, built-in full-text for hybrid search.</td></tr>
+      <tr><td>Embeddings</td><td>BAAI/bge-small-en-v1.5 (local)</td><td>Free, no rate limits, reproducible — the harness re-embeds often.</td></tr>
+      <tr><td>Re-ranker</td><td>bge-reranker-base (local)</td><td>Cross-encoder precision without API cost.</td></tr>
+      <tr><td>Answering LLM</td><td>Groq free tier</td><td>Fast, free; tool-calling support.</td></tr>
+      <tr><td>Judge LLM</td><td>Gemini free tier</td><td>A different model family from the one being judged.</td></tr>
+      <tr><td>Background jobs</td><td>Postgres job table + worker</td><td>No extra infrastructure; enough for one Drive folder.</td></tr>
+      <tr><td>Integrations</td><td>Google Drive API, Slack Bolt for Python</td><td>Both free for a test workspace / testing-mode app.</td></tr>
+      <tr><td>Deploy &amp; CI</td><td>Docker, AWS free plan, GitHub Actions</td><td>CI runs the eval harness as a merge gate.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="risks">
+  <h2>Risks</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Risk</th><th>What we do about it</th></tr></thead>
+    <tbody>
+      <tr><td><b>Scope keeps growing</b></td><td>The out-of-scope list is binding. New ideas go to "future work" unless something of equal size is removed.</td></tr>
+      <tr><td><b>Writing the golden set takes too long</b></td><td>Start now: every manual test question and its expected passage goes straight into the CSV.</td></tr>
+      <tr><td><b>Targets turn out unreachable</b></td><td>Report the achieved number with a diagnosis. An honest miss beats a moved goalpost.</td></tr>
+      <tr><td><b>LLM judge disagrees with humans</b></td><td>Treat the judge prompt as the bug; fix it against the hand-labelled set first.</td></tr>
+      <tr><td><b>Re-ranker makes it too slow</b></td><td>Re-rank fewer candidates and report the recall cost of doing so.</td></tr>
+      <tr><td><b>Free-tier rate limits (Groq 30 req/min)</b></td><td>Cache eval runs, throttle the harness, retry with backoff.</td></tr>
+      <tr><td><b>Google app verification</b></td><td>Stay in testing mode (up to 100 named test users) — enough for a demo.</td></tr>
+      <tr><td><b>OAuth token leak</b></td><td>Encrypt at rest, least-privilege read-only scope, never log tokens.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="done">
+  <h2>Definition of done</h2>
+  <ul class="check">
+    <li>Every MUST implemented.</li>
+    <li>Every target met, or missed with a written explanation.</li>
+    <li>Eval harness runs in CI and blocks merges that lower recall.</li>
+    <li>Deployed and answering questions at a public URL.</li>
+    <li>Editing a policy in Drive changes the answer; a refused question reaches HR in Slack.</li>
+    <li>Ablation table published, showing what each component contributed.</li>
+    <li>Report includes what was tried and abandoned, with the numbers that justified it.</li>
+    <li>60–90 second demo: a cited answer, a two-search question, a refusal, a superseded-policy answer, and the Slack handoff.</li>
+    <li>README describes current capability honestly, including what isn't measured.</li>
+  </ul>
+</section>
+
+<section id="explain">
+  <h2>Explaining it to other people</h2>
+  <p class="sub">Ready-made answers, from a 10-second version to interview follow-ups.</p>
+  <h3>The 10-second version</h3>
+  <p>"It's an assistant that answers questions from company policies, shows exactly where each answer came from, and says 'I don't know' instead of guessing."</p>
+  <h3>The 30-second version</h3>
+  <p>"Documents are split into passages and turned into vectors so they can be searched by meaning. When someone asks a question, an agent searches, reads the best passages and either answers with citations or escalates to HR. It always uses the latest version of a policy, it syncs from Google Drive and answers in Slack — and every quality claim is backed by an evaluation harness that runs in CI."</p>
+  <h3>Likely follow-up questions</h3>
+  <dl class="qa">
+    <dt>Why not just use ChatGPT?</dt>
+    <dd>It's never seen your documents, and it will answer confidently even when they don't contain the answer. PolicyPilot is built to cite sources and to refuse, and it measures how often it wrongly answers.</dd>
+    <dt>How do you know it's good?</dt>
+    <dd>A labelled set of 60+ questions split into slices. Retrieval is scored with recall@k and MRR, answers with faithfulness, and honesty with false answer rate. Every improvement has a before-and-after number.</dd>
+    <dt>Why PostgreSQL instead of a vector database?</dt>
+    <dd>I need normal relational data anyway. Supersession is a join, hybrid search uses Postgres full-text, and one database is simpler than keeping two in sync.</dd>
+    <dt>What happens when a policy changes?</dt>
+    <dd>The Drive sync picks up the edit, ingests the new version, and marks the old one superseded. Answers switch to the new version, and can say what changed.</dd>
+    <dt>Why only Slack and Drive?</dt>
+    <dd>Each one makes a core feature real: Drive makes supersession automatic, Slack makes escalation reach a human. More connectors would add breadth, not evidence.</dd>
+    <dt>How would you make it multi-tenant?</dt>
+    <dd>Add an organisation ID to documents and chunks, enforce it in every query with Postgres row-level security, and store each organisation's OAuth tokens encrypted. Deliberately left as future work.</dd>
+  </dl>
+</section>
+
+<section id="glossary">
+  <h2>Glossary</h2>
+  <div class="gloss">
+    <div><b>RAG</b><span>Retrieval-augmented generation: find relevant text first, then have the model answer using only that text.</span></div>
+    <div><b>Chunk</b><span>A passage of a document (~800 characters) — the unit that gets searched and cited.</span></div>
+    <div><b>Embedding</b><span>A list of numbers representing meaning. Similar meanings → nearby numbers.</span></div>
+    <div><b>pgvector / HNSW</b><span>Postgres extension for vectors, and the index that makes nearest-neighbour search fast.</span></div>
+    <div><b>Hybrid search</b><span>Combining keyword matching with meaning-based search, so exact terms aren't missed.</span></div>
+    <div><b>Re-ranker</b><span>A slower, more precise model that re-orders the top candidates.</span></div>
+    <div><b>Agent</b><span>A model that chooses which tool to use next (search, read, escalate) in a bounded loop.</span></div>
+    <div><b>Supersession</b><span>A newer document version replacing an older one; the old one stops being used for answers.</span></div>
+    <div><b>Golden set</b><span>Hand-labelled questions with known correct passages and answers, used to score the system.</span></div>
+    <div><b>Recall@k / MRR</b><span>Was the right passage in the top k? How near the top was it?</span></div>
+    <div><b>False answer rate</b><span>How often it answers when it should have said "I don't know".</span></div>
+    <div><b>Ablation</b><span>Adding or removing one component at a time to measure exactly what it contributes.</span></div>
+    <div><b>OAuth</b><span>Letting a user grant PolicyPilot limited access to their Drive without sharing a password.</span></div>
+    <div><b>Idempotent</b><span>Doing the same operation twice has the same effect as once — safe to retry.</span></div>
+  </div>
+</section>
+
+<footer>PolicyPilot PRD v1.1 · supersedes the Engineering Specification v1.0 · Amaljith T A</footer>
+</main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true,theme:window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"neutral"});</script>
+</body>
+</html>
