@@ -28,6 +28,10 @@ class Settings(BaseSettings):
     )
     HNSW_M: int = 16
     HNSW_EF_CONSTRUCTION: int = 64
+    # LLM (any OpenAI-compatible provider: Cerebras, Groq, Mistral, Ollama)
+    LLM_BASE_URL: str = "https://api.cerebras.ai/v1"
+    LLM_API_KEY: Optional[str] = None
+    LLM_MODEL: str = "gpt-oss-120b"
 
 
     # Security
