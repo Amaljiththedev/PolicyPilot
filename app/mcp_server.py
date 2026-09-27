@@ -6,7 +6,13 @@ search the policies and get cited answers, through the same code path as /ask.
 Everything printed to stdout is protocol, so logs go to stderr.
 """
 import logging
+import os
 import sys
+
+# keep model-loading progress bars out of the logs (stdout must stay pure protocol)
+os.environ.setdefault("HF_HUB_DISABLE_PROGRESS_BARS", "1")
+os.environ.setdefault("TRANSFORMERS_VERBOSITY", "error")
+os.environ.setdefault("TQDM_DISABLE", "1")
 
 from mcp.server.fastmcp import FastMCP
 
@@ -93,5 +99,21 @@ def policy_changes(document_id: int) -> dict:
         db.close()
 
 
+def _warm_up():
+    """Load the embedding + re-ranker models in the background at start-up, so the first
+    real question isn't slowed by model loading (clients time out after ~60 s)."""
+    try:
+        from app.api.services.embeddings import warm_up
+        from app.api.services.reranker import get_cross_encoder
+        warm_up()
+        s = get_settings()
+        if s.RERANK_ENABLED and s.RERANK_STRATEGY.startswith("cross"):
+            get_cross_encoder(s.RERANK_MODEL)
+    except Exception as e:                      # never let warm-up kill the server
+        logging.warning("warm-up failed: %s", e)
+
+
 if __name__ == "__main__":
+    import threading
+    threading.Thread(target=_warm_up, daemon=True).start()
     mcp.run()

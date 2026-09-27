@@ -25,3 +25,5 @@ Thumbs.db
 
 .env.bak
 *.tgz
+mcp_stderr.log
+mcp_debug.txt
