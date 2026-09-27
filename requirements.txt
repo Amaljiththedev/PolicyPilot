@@ -25,4 +25,4 @@ google-auth>=2.30          # verify Google ID tokens (sign-in)
 requests>=2.31             # transport used by google-auth
 cryptography>=42           # encrypt stored Drive refresh tokens
 slack_sdk>=3.30            # Slack bot (Socket Mode)
-mcp>=1.2                   # MCP server
+mcp>=1.2,<2               # MCP server (code uses FastMCP; mcp 2.x renamed it)
