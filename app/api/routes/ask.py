@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user, get_db
 from app.api.services.answer import answer_question
+from app.api.services.query_log import log_query
 from app.db.models import Feedback, Query, User
 from app.schemas.ask import AskRequest, AskResponse, FeedbackRequest, FeedbackResponse
 
@@ -15,19 +16,13 @@ def ask(req: AskRequest, db: Session = Depends(get_db),
     if not req.question.strip():
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "question is blank")
     try:
-        result = answer_question(db, req.question, req.top_k, organisation=req.organisation)
+        # a user's own organisation is the default scope, so they don't get another employer's rules
+        result = answer_question(db, req.question, req.top_k,
+                                 organisation=req.organisation or current_user.organisation)
     except RuntimeError as e:                      # LLM provider down / rate limited
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, f"answer service unavailable: {e}")
 
-    q = Query(user_id=current_user.id, prompt=req.question, response=result["answer"],
-              source_chunk_ids=[s["chunk_id"] for s in result["sources"]],
-              cited_chunk_ids=[result["sources"][n - 1]["chunk_id"] for n in result["citations"]],
-              answerable=result["answerable"], escalated=result["escalate"],
-              refusal_reason=result["reason"], latency_ms=result["latency_ms"],
-              model=result["model"])
-    db.add(q)
-    db.commit()
-    db.refresh(q)
+    q = log_query(db, result, current_user.id, source="api")
     return AskResponse(query_id=q.id, **result)
 
 

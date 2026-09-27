@@ -40,5 +40,32 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"   # lets the container reach Ollama on your laptop
 
+  # Optional workers. Start with:  docker compose --profile slack --profile drive up -d
+  slack:
+    build: .
+    profiles: ["slack"]
+    command: ["python", "scripts/slack_bot.py"]
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://policypilot:policypilot@db:5432/policypilot
+      HF_HUB_OFFLINE: "1"
+    depends_on:
+      api:
+        condition: service_started
+    restart: unless-stopped
+
+  drive-sync:
+    build: .
+    profiles: ["drive"]
+    command: ["python", "scripts/drive_sync.py", "--loop"]
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://policypilot:policypilot@db:5432/policypilot
+      HF_HUB_OFFLINE: "1"
+    depends_on:
+      api:
+        condition: service_started
+    restart: unless-stopped
+
 volumes:
   postgres_data:

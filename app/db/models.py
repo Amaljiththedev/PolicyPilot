@@ -14,7 +14,10 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
-    hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
+    hashed_password: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)   # None for Google users
+    auth_provider: Mapped[str] = mapped_column(String(32), default="password", nullable=False)
+    google_sub: Mapped[Optional[str]] = mapped_column(String(64), unique=True, index=True, nullable=True)
+    organisation: Mapped[Optional[str]] = mapped_column(String(120), nullable=True)   # default search scope
     full_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     role: Mapped[str] = mapped_column(String(32), default="staff", nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
@@ -93,6 +96,9 @@ class Query(Base):
     refusal_reason: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     latency_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     model: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    source: Mapped[str] = mapped_column(String(16), default="api", nullable=False)   # api | slack | mcp
+    slack_channel: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
+    slack_ts: Mapped[Optional[str]] = mapped_column(String(32), index=True, nullable=True)  # bot reply ts, for reactions
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
@@ -113,3 +119,34 @@ class Feedback(Base):
     )
 
     query: Mapped["Query"] = relationship("Query", back_populates="feedbacks")
+
+
+class DriveConnection(Base):
+    """One user's link to Google Drive: which folder to sync, and an encrypted refresh token."""
+    __tablename__ = "drive_connections"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    google_email: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    refresh_token_enc: Mapped[str] = mapped_column(Text, nullable=False)
+    folder_id: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
+    organisation: Mapped[Optional[str]] = mapped_column(String(120), nullable=True)
+    last_synced_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_report: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class DriveFile(Base):
+    """A Drive file we have ingested. modified_time decides whether it needs re-syncing."""
+    __tablename__ = "drive_files"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    connection_id: Mapped[int] = mapped_column(Integer, ForeignKey("drive_connections.id", ondelete="CASCADE"),
+                                               nullable=False, index=True)
+    file_id: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    modified_time: Mapped[str] = mapped_column(String(40), nullable=False)
+    document_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("documents.id", ondelete="SET NULL"),
+                                                      nullable=True)
+    removed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)

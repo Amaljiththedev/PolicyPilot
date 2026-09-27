@@ -26,6 +26,7 @@ else:
 subprocess.run([sys.executable, "scripts/create_tables.py"], check=True)
 subprocess.run([sys.executable, "scripts/migrate_p8.py"], check=True)
 subprocess.run([sys.executable, "scripts/migrate_p9.py"], check=True)
+subprocess.run([sys.executable, "scripts/migrate_p10.py"], check=True)
 
 os.execvp("uvicorn", ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000",
                       "--workers", os.environ.get("WEB_WORKERS", "1")])

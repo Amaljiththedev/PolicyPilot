@@ -36,10 +36,13 @@ def setup_db():
     # set the override per test, so another test file clearing overrides can't
     # silently point these tests at the real Postgres database
     app.dependency_overrides[get_db] = override_get_db
+    from app.core.config import get_settings
+    get_settings().PASSWORD_LOGIN_ENABLED = True       # these tests cover the (now optional) password flow
     Base.metadata.create_all(bind=engine)
     yield
     Base.metadata.drop_all(bind=engine)
     app.dependency_overrides.pop(get_db, None)
+    get_settings().PASSWORD_LOGIN_ENABLED = False
 
 
 def test_register_user_success():

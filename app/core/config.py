@@ -44,6 +44,27 @@ class Settings(BaseSettings):
     SEARCH_MODE: str = "vector"
     HYBRID_CANDIDATES: int = 30        # per retriever, before RRF
 
+    # Sign-in (Google). Password login is off unless PASSWORD_LOGIN_ENABLED=true.
+    GOOGLE_CLIENT_ID: Optional[str] = None
+    GOOGLE_CLIENT_SECRET: Optional[str] = None
+    GOOGLE_REDIRECT_URI: str = "http://localhost:8000/api/v1/auth/google/callback"
+    GOOGLE_ALLOWED_DOMAINS: str = ""        # e.g. "liverpool.ac.uk,gmail.com"; empty = any verified Google account
+    ADMIN_EMAILS: str = ""                  # comma-separated; these accounts get role=admin on first sign-in
+    PASSWORD_LOGIN_ENABLED: bool = False
+
+    # Google Drive sync
+    TOKEN_ENCRYPTION_KEY: Optional[str] = None   # Fernet key; encrypts stored Drive refresh tokens
+    DRIVE_SYNC_INTERVAL_SECONDS: int = 900
+
+    # Slack bot (Socket Mode: no public URL needed)
+    SLACK_BOT_TOKEN: Optional[str] = None        # xoxb-...
+    SLACK_APP_TOKEN: Optional[str] = None        # xapp-... (connections:write)
+    SLACK_ESCALATION_USER_ID: Optional[str] = None   # e.g. U0123 (HR contact) tagged when the bot can't answer
+    SLACK_DEFAULT_ORGANISATION: Optional[str] = None
+
+    # MCP server
+    MCP_USER_EMAIL: str = "mcp@policypilot.local"   # queries asked through MCP are logged as this user
+
     # Answering (Phase 8)
     ANSWER_TOP_K: int = 5
     ANSWER_PROMPT: str = "v2"          # v1 | v2, see answer.py

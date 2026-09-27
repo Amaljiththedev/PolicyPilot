@@ -16,6 +16,8 @@ class UserRead(BaseModel):
     email: EmailStr
     full_name: Optional[str] = None
     role: str
+    auth_provider: str = "password"
+    organisation: Optional[str] = None
     is_active: bool
     created_at: datetime
 
