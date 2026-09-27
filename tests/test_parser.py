@@ -141,3 +141,8 @@ def test_extract_text_corrupt_docx():
             content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             filename="corrupt.docx"
         )
+
+
+def test_txt_byte_order_mark_is_removed():
+    from app.api.ingestion.parser import _from_txt
+    assert _from_txt("﻿Annual leave is 28 days.".encode("utf-8")) == "Annual leave is 28 days."

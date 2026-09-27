@@ -47,7 +47,8 @@ def _normalise(text: str) -> str:
 
 def _from_txt(content: bytes) -> str:
     try:
-        return content.decode("utf-8")
+        # utf-8-sig drops the byte-order mark Google Docs adds on plain-text export
+        return content.decode("utf-8-sig")
     except UnicodeDecodeError:
         # latin-1 maps every byte to a character, so this cannot raise.
         # Some characters may be wrong, which beats rejecting the file.
