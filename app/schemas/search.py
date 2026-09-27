@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 class SearchRequest(BaseModel):
     query: str = Field(min_length=1, max_length=1000)
     top_k: int | None = Field(default=None, ge=1, le=50)
+    organisation: str | None = Field(default=None, description="only search this organisation's policies")
 
 
 class SearchHit(BaseModel):

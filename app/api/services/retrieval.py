@@ -35,24 +35,34 @@ def _or_query(query: str):
         cast(func.plainto_tsquery("english", query), Text), "&", "|"))
 
 
-def _vector_rows(db, qvec, limit):
+def _scope(stmt, scope):
+    """Only ready documents; by default only the current version of each policy;
+    optionally only one organisation's policies."""
+    stmt = stmt.where(Document.status == "ready")
+    if not scope.get("include_superseded"):
+        stmt = stmt.where(Document.is_current.is_(True))
+    if scope.get("organisation"):
+        stmt = stmt.where(Document.organisation == scope["organisation"])
+    return stmt
+
+
+def _vector_rows(db, qvec, limit, scope):
     distance = Chunk.embedding.cosine_distance(qvec).label("distance")
     stmt = (select(Chunk, Document.title, distance)
-            .join(Document, Chunk.document_id == Document.id)
-            .where(Document.status == "ready")
-            .order_by(distance).limit(limit))
+            .join(Document, Chunk.document_id == Document.id))
+    stmt = _scope(stmt, scope).order_by(distance).limit(limit)
     return db.execute(stmt).all()
 
 
-def _keyword_rows(db, query, qvec, limit):
+def _keyword_rows(db, query, qvec, limit, scope):
     tsv = func.to_tsvector("english", Chunk.text)
     tsq = _or_query(query)
     rank = func.ts_rank_cd(tsv, tsq).label("kw_rank")
     distance = Chunk.embedding.cosine_distance(qvec).label("distance")
     stmt = (select(Chunk, Document.title, distance)
             .join(Document, Chunk.document_id == Document.id)
-            .where(Document.status == "ready", tsv.op("@@")(tsq))
-            .order_by(rank.desc()).limit(limit))
+            .where(tsv.op("@@")(tsq)))
+    stmt = _scope(stmt, scope).order_by(rank.desc()).limit(limit)
     return db.execute(stmt).all()
 
 
@@ -64,8 +74,11 @@ def _to_hit(chunk, title, dist) -> dict:
 
 def search_chunks(db: Session, query: str, top_k: int | None = None,
                   use_rerank: bool | None = None, strategy: str | None = None,
-                  mode: str | None = None) -> list[dict]:
-    """Return the top-k chunks for the query, best first."""
+                  mode: str | None = None, include_superseded: bool = False,
+                  organisation: str | None = None) -> list[dict]:
+    """Return the top-k chunks for the query, best first.
+    Superseded policy versions are excluded unless include_superseded=True."""
+    scope = {"include_superseded": include_superseded, "organisation": organisation}
     k = top_k or settings.TOP_K
     mode = mode or settings.SEARCH_MODE
     if mode not in MODES:
@@ -79,13 +92,13 @@ def search_chunks(db: Session, query: str, top_k: int | None = None,
 
     qvec = embed_query(query)
     if mode == "vector":
-        hits = [_to_hit(*r) for r in _vector_rows(db, qvec, fetch)]
+        hits = [_to_hit(*r) for r in _vector_rows(db, qvec, fetch, scope)]
     elif mode == "keyword":
-        hits = [_to_hit(*r) for r in _keyword_rows(db, query, qvec, fetch)]
+        hits = [_to_hit(*r) for r in _keyword_rows(db, query, qvec, fetch, scope)]
     else:
         pool = max(fetch, settings.HYBRID_CANDIDATES)
-        vec = {r[0].id: r for r in _vector_rows(db, qvec, pool)}
-        kw = {r[0].id: r for r in _keyword_rows(db, query, qvec, pool)}
+        vec = {r[0].id: r for r in _vector_rows(db, qvec, pool, scope)}
+        kw = {r[0].id: r for r in _keyword_rows(db, query, qvec, pool, scope)}
         rows = {**vec, **kw}
         vrank = {cid: i for i, cid in enumerate(vec, 1)}
         krank = {cid: i for i, cid in enumerate(kw, 1)}

@@ -72,7 +72,11 @@ def main(name: str, rerank_strategy: str | None = None,
         strict_rank = next((i for i, t in enumerate(texts, 1)
                             if _norm(it["evidence"]) in _norm(t)), None) if it.get("evidence") else None
         ndcg = ndcg_at_k(texts, it["evidence"], 10) if it.get("evidence") else None
-        per_item.append({**it, "rank": rank, "strict_rank": strict_rank, "ndcg@10": ndcg,
+        # superseded slice: the OLD wording of a rule that has since changed must not be retrieved
+        stale_rank = next((i for i, t in enumerate(texts, 1)
+                           if _norm(it["stale_evidence"]) in _norm(t)), None) \
+            if it.get("stale_evidence") else None
+        per_item.append({**it, "rank": rank, "strict_rank": strict_rank, "ndcg@10": ndcg, "stale_rank": stale_rank,
                          "top_score": hits[0]["score"] if hits else None,
                          "latency_ms": round(latency_ms)})
     db.close()
@@ -83,6 +87,8 @@ def main(name: str, rerank_strategy: str | None = None,
         groups[f"{r['source']}:{r['slice']}"].append(r)
         if r.get("doc") and r["slice"] != "unanswerable":
             groups[f"doc:{r['doc']}"].append(r)          # per-document breakdown
+        if r["slice"] == "superseded":
+            groups["superseded"].append(r)
 
     report = {}
     for g, rows in sorted(groups.items()):
@@ -108,6 +114,13 @@ def main(name: str, rerank_strategy: str | None = None,
     report["ALL (answerable)"]["recall@1_95ci"] = bootstrap_ci(r1)
     report["ALL (answerable)"]["ndcg@10_95ci"] = bootstrap_ci([r["ndcg@10"] for r in ans])
 
+    sup = [r for r in per_item if r["slice"] == "superseded"]
+    if sup:
+        report["superseded"]["stale_leak@5"] = round(
+            sum(1 for r in sup if r["stale_rank"] and r["stale_rank"] <= 5) / len(sup), 3)
+        report["superseded"]["current_hit@5"] = round(
+            sum(1 for r in sup if r["rank"] and r["rank"] <= 5) / len(sup), 3)
+
     answerable_top = [r["top_score"] for r in per_item
                       if r["slice"] != "unanswerable" and r["top_score"] is not None]
     if answerable_top:
@@ -119,6 +132,10 @@ def main(name: str, rerank_strategy: str | None = None,
               f"{m.get('recall@10', ''):>7}{m.get('mrr', ''):>7}{m.get('ndcg@10', ''):>7}{m.get('strict_R@1', ''):>7}"
               f"{m.get('strict_R@5', ''):>7}{m.get('top_score_median', ''):>8}")
 
+    if sup:
+        m = report["superseded"]
+        print(f"\nsuperseded rules ({m['n']}): new wording in top 5 {m['current_hit@5']}, "
+              f"OLD wording leaked into top 5 {m['stale_leak@5']}  (target: 1.0 and 0.0)")
     a = report["ALL (answerable)"]
     print(f"\n95% CI (bootstrap, {a['n']} q): MRR {a['mrr']} {a['mrr_95ci']}  "
           f"R@1 {a['recall@1']} {a['recall@1_95ci']}  nDCG {a['ndcg@10']} {a['ndcg@10_95ci']}")

@@ -17,5 +17,5 @@ def search(
 ):
     if not req.query.strip():
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "query is blank")
-    hits = search_chunks(db, req.query, req.top_k)
+    hits = search_chunks(db, req.query, req.top_k, organisation=req.organisation)
     return SearchResponse(query=req.query, hits=hits)

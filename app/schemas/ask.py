@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 class AskRequest(BaseModel):
     question: str = Field(min_length=1, max_length=1000)
     top_k: int | None = Field(default=None, ge=1, le=10)
+    organisation: str | None = Field(default=None, description="only answer from this organisation's policies")
 
 
 class Source(BaseModel):

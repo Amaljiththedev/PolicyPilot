@@ -90,6 +90,16 @@ def main(name: str, prompt: str | None, top_k: int | None, limit: int | None, no
             r = json.loads(line)
             if "error" not in r:
                 done_q[r["question"]] = r
+        # drop saved rows whose label changed since they were run (e.g. relabelled
+        # unanswerable -> answerable): their scores would be computed against the old label
+        current = {it["question"]: it for it in items}
+        stale = [q for q, r in done_q.items()
+                 if q in current and (r.get("slice"), r.get("evidence") or "") !=
+                 (current[q]["slice"], current[q]["evidence"] or "")]
+        for q in stale:
+            del done_q[q]
+        if stale:
+            print(f"re-running {len(stale)} question(s) whose label changed: {stale}")
         print(f"resuming: {len(done_q)} questions already done in {ckpt.name}")
     rows = []
     for i, it in enumerate(items, 1):

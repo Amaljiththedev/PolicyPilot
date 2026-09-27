@@ -241,6 +241,16 @@ Moving into Docker pulled in SQLAlchemy 2.1, which uses psycopg 3 by default. Th
 
 A test file that cleared FastAPI's dependency overrides made another file's tests run against the real database. Fixed by saving and restoring overrides per test.
 
+### 10. Phase 9: policy versions, and a bigger eval corpus
+
+The corpus grew to three documents in different styles: the UoL student handbook, a UK town council HR handbook (Faversham) and a Scottish council ICT acceptable-use policy (East Dunbartonshire, written for five audiences). The golden set grew from 37 to 77 questions (63 answerable, 14 unanswerable), with a `doc` column so results are reported per document. `evals/check_golden.py` verifies every evidence quote against the app's own parser. Adding the HR handbook turned one "unanswerable" question (company parental leave) into an answerable one, so it was relabelled.
+
+Retrieval across 3 documents (vector + MiniLM): MRR 0.854 (95% CI 0.78–0.92, narrower than with 30 questions). Per document: HR 0.917, student handbook 0.881, ICT policy 0.728. The ICT policy is hardest: its formal wording ("receives a call from a member of ICT staff") doesn't match how people ask ("someone from IT phoned"), and two councils' email/internet rules compete. That conflict is why `/search` and `/ask` now take an `organisation` filter.
+
+Versions: documents sharing a `policy_key` form a version chain. Uploading a new version marks the old one superseded; search and `/ask` only see current versions, and `GET /documents/{id}/changes` gives a sentence-level diff. `scripts/make_revision.py` creates a realistic 2025 revision of the HR handbook with four rule changes (holiday notice 4 → 2 weeks, carry-over 5 → 10 days, sick call 12 noon → 10am, paternity pay statutory → full). **Gate result: new wording in the top 5 for 4/4 questions, old wording leaked into the top 5 for 0/4.**
+
+The answer eval found a serious generation error: asked whether a doctor's note is needed after more than a week off sick, the model said no, inverting a passage that lists three thresholds (4 days, a week, three weeks). Retrieval and the citation were correct; the model misread. The LLM judge caught it (faithfulness 0.33). Next fix to test: make the model quote the governing sentence before answering.
+
 ---
 
 ## Next experiments

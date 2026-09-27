@@ -15,7 +15,7 @@ def ask(req: AskRequest, db: Session = Depends(get_db),
     if not req.question.strip():
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "question is blank")
     try:
-        result = answer_question(db, req.question, req.top_k)
+        result = answer_question(db, req.question, req.top_k, organisation=req.organisation)
     except RuntimeError as e:                      # LLM provider down / rate limited
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, f"answer service unavailable: {e}")
 

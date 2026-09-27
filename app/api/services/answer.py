@@ -83,11 +83,11 @@ def check_citations(answer: str, cited: list, n_passages: int) -> tuple[str, lis
 
 
 def answer_question(db: Session, question: str, top_k: int | None = None,
-                    prompt_version: str | None = None) -> dict:
+                    prompt_version: str | None = None, organisation: str | None = None) -> dict:
     k = top_k or settings.ANSWER_TOP_K
     template = PROMPTS[prompt_version or settings.ANSWER_PROMPT]
     t0 = time.perf_counter()
-    hits = search_chunks(db, question, k)
+    hits = search_chunks(db, question, k, organisation=organisation)
     sources = [{"n": i, "chunk_id": h["chunk_id"], "document_id": h["document_id"],
                 "document_title": h["document_title"], "text": h["text"]}
                for i, h in enumerate(hits, 1)]

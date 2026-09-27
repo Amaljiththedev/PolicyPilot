@@ -1,78 +1,78 @@
-question,evidence,slice,doc
-who do I call in an emergency on campus,call 2222 on any University phone,simple,uol_handbook
-do I need a TV licence to watch TV in my room,it is a legal requirement to obtain a television licence,simple,uol_handbook
-my landlord wants proof I'm a student so I don't pay council tax,Council Tax Student Certificate,simple,uol_handbook
-I lost my student card how do I get a new one,Replacement smart cards can be requested online,simple,uol_handbook
-what counts as copying someone else's work,Plagiarism occurs when a student misrepresents the work or ideas,simple,uol_handbook
-how do I report harassment anonymously,let us know anonymously,simple,uol_handbook
-I was ill during exams can I get extra consideration,Personal Exceptional Circumstances,conditional,uol_handbook
-when does welcome week start,Welcome Week Monday 15 September 2025 to Friday 19 September 2025,simple,uol_handbook
-when is the spring break this year,Spring Break Monday 23March 2026 to Friday 10 April 2026,simple,uol_handbook
-when are graduation ceremonies,Graduation 2026 Ceremonies Monday 13 July to Friday 17 July 2026,simple,uol_handbook
-how much is the fine for watching TV without a licence,"failure to do so can lead to a fine of up to £1,000",simple,uol_handbook
-how much does a TV licence cost,The current cost of the TV licence is £169.50 for a standard licence,simple,uol_handbook
-is there a cheap bus home late at night,The N1 Night bus runs from Birkenhead to Allerton every Thursday,simple,uol_handbook
-how much is a young persons railcard,may be purchased for £30 by anyone aged 16-25,simple,uol_handbook
-do I need to sign up with a doctor in Liverpool,it is important that you register with a local General Practitioner,simple,uol_handbook
-is there a nursery for my child on campus,The University’s purpose-built nursery is located on campus,simple,uol_handbook
-what happens if I get called for jury duty,From time to time students are called for jury service,conditional,uol_handbook
-my friend and I wrote our essays together is that allowed,two or more students consciously collaborate in the preparation and production of work,conditional,uol_handbook
-can I use ChatGPT to write my assignment,generated or completed by Generative Artificial Intelligence (GAI) software,conditional,uol_handbook
-can the external examiner see my coursework,External examiners have the right to see all assessed work from the modules they examine,simple,uol_handbook
-can I pay my tuition fees in instalments,Payment of tuition fees can either be made in full or in instalment plans,conditional,uol_handbook
-what if I'm too ill to ever resit my exams,a Board of Examiners may award an aegrotat degree,conditional,uol_handbook
-I want to complain about my course where do I start,The majority of complaints can be resolved within the area in which a student has a concern,simple,uol_handbook
-where is the Student Life Centre,The Student Life Centre located in the Alsop Building,simple,uol_handbook
-what happens if I don't complete registration as an international student,reporting their nonattendance to the UK Home Office,conditional,uol_handbook
-can I take a break from my studies for health reasons,sort out other problems without financial or academic penalty before you return and restart your studies,conditional,uol_handbook
-where can I talk to someone about my mental health,the Mental Health Advisory Service,simple,uol_handbook
-can students disagree about controversial topics at the university,to think critically and to disagree well,simple,uol_handbook
-can I expense a taxi after 9pm,,unanswerable,none
-what is the company parental leave policy,The basic entitlement is to 18 weeks of unpaid leave in respect of each child,simple,faversham_hr
-how do I get on the wifi with my laptop,connect to the University’s free Wi-Fi service,simple,uol_handbook
-how much does a parking permit cost for students per year,,unanswerable,none
-what mark do I need to pass a first year module,"Levels 4, 5 and 6 all carry a pass mark of 40%",simple,uol_handbook
-how many days holiday do university staff get,,unanswerable,none
-can I bring my dog into halls of residence,,unanswerable,none
-what time does the library close on Sundays,,unanswerable,none
-how much is the student gym membership per month,,unanswerable,none
-how much notice do I need to give to book holiday,All requests for leave should be made at least 4 weeks in advance,simple,faversham_hr
-can I carry over unused holiday to next year,You may carry forward up to 5 days,conditional,faversham_hr
-when does the holiday year start,holiday year which runs from 01 April to 31 March,simple,faversham_hr
-can I take three weeks off in one go,no more than two consecutive weeks,conditional,faversham_hr
-what time do I have to call in sick by,by no later than 12 noon,simple,faversham_hr
-do I need a doctors note if I'm off sick for more than a week,Any absence of more than a week must be certified by,conditional,faversham_hr
-can I call in sick with a hangover,Hangovers are not regarded as legitimate reasons to take sickness absence,simple,faversham_hr
-do I get paid if I'm called for jury service,"Employees undertaking jury service or serving on public bodies, or undertaking public duties, will be entitled to paid time off",conditional,faversham_hr
-how long is paternity leave,"entitled to two weeks of leave, which can be taken as two consecutive weeks",simple,faversham_hr
-is paternity leave paid,Paternity leave is payable at the statutory rate,simple,faversham_hr
-how far in advance do I have to ask for parental leave,A request to take parental leave should be submitted 21 days in advance,simple,faversham_hr
-what happens if snow stops me getting into work,you will be required to take time from your annual leave allowance to cover any absence,conditional,faversham_hr
-can I vape inside the office,The Council operates a smoke-free workplace,simple,faversham_hr
-can I browse the internet for personal stuff at work,Personal use during working hours will be treated as misconduct,simple,faversham_hr
-is my work email monitored,Monitoring of email usage takes place without notice,simple,faversham_hr
-how do I claim back travel costs,you must complete an expense claim form and support the claim by submitting valid receipts,simple,faversham_hr
-do I get paid time off for a dentist appointment,Paid leave will not normally be granted for non-emergency visits,conditional,faversham_hr
-what is the council's pension contribution rate,,unanswerable,none
-how much mileage allowance do I get per mile for using my own car,,unanswerable,none
-can I bring my dog to the office,,unanswerable,none
-how much is overtime paid per hour,,unanswerable,none
-what's the biggest email attachment I can send,Attachments greater than 20 megabytes will only be transmitted by special arrangement,simple,edc_ict_aup
-how long until my old emails get archived,all email messages over 90 days old,simple,edc_ict_aup
-I lost my work laptop how quickly do I have to report it,No longer than 1 full working day,simple,edc_ict_aup
-my work phone got stolen from my car what do I do,the incident must be reported to the police as soon as possible,conditional,edc_ict_aup
-can I plug my own USB stick into my work computer,Personal and unencrypted USB devices should not be attached to Council ICT facilities without prior authorisation,conditional,edc_ict_aup
-can I auto forward my work email to my gmail,must not set mailbox rules to automatically forward email to an external,simple,edc_ict_aup
-someone from IT phoned asking for my password what should I do,should verify their name on the intranet directory and call them back,simple,edc_ict_aup
-can I use my work email for personal messages,"Must take place outwith working hours i.e. before or after work, during lunch or other breaks",conditional,edc_ict_aup
-how do I mark a personal call on the office phone,Personal calls can be differentiated from business calls by appending an asterisk,simple,edc_ict_aup
-what should I do when working on my laptop on the train,Position themselves so that work cannot be overlooked by another person,simple,edc_ict_aup
-can I book a library computer for two hours,Sessions cannot exceed one hour if another user wishes to book a session,conditional,edc_ict_aup
-do I have to be a library member to use the library computers,You do not need to be a member of the library to use ICT and Internet facilities,simple,edc_ict_aup
-can my 14 year old use the library internet,"If you are under 16, we require a signed consent form from your parent or guardian",conditional,edc_ict_aup
-how long is a library pc booking held if I'm late,A booking will be held for ten minutes from the start time,simple,edc_ict_aup
-why did my password protected zip file get blocked by email,block password protected and encrypted documents,simple,edc_ict_aup
-what is the wifi password in the library,,unanswerable,none
-how much does it cost to print a page at the library,,unanswerable,none
-which VPN should I install on my home computer to work remotely,,unanswerable,none
-how big is my email mailbox quota,,unanswerable,none
+question,evidence,slice,doc,stale_evidence
+who do I call in an emergency on campus,call 2222 on any University phone,simple,uol_handbook,
+do I need a TV licence to watch TV in my room,it is a legal requirement to obtain a television licence,simple,uol_handbook,
+my landlord wants proof I'm a student so I don't pay council tax,Council Tax Student Certificate,simple,uol_handbook,
+I lost my student card how do I get a new one,Replacement smart cards can be requested online,simple,uol_handbook,
+what counts as copying someone else's work,Plagiarism occurs when a student misrepresents the work or ideas,simple,uol_handbook,
+how do I report harassment anonymously,let us know anonymously,simple,uol_handbook,
+I was ill during exams can I get extra consideration,Personal Exceptional Circumstances,conditional,uol_handbook,
+when does welcome week start,Welcome Week Monday 15 September 2025 to Friday 19 September 2025,simple,uol_handbook,
+when is the spring break this year,Spring Break Monday 23March 2026 to Friday 10 April 2026,simple,uol_handbook,
+when are graduation ceremonies,Graduation 2026 Ceremonies Monday 13 July to Friday 17 July 2026,simple,uol_handbook,
+how much is the fine for watching TV without a licence,"failure to do so can lead to a fine of up to £1,000",simple,uol_handbook,
+how much does a TV licence cost,The current cost of the TV licence is £169.50 for a standard licence,simple,uol_handbook,
+is there a cheap bus home late at night,The N1 Night bus runs from Birkenhead to Allerton every Thursday,simple,uol_handbook,
+how much is a young persons railcard,may be purchased for £30 by anyone aged 16-25,simple,uol_handbook,
+do I need to sign up with a doctor in Liverpool,it is important that you register with a local General Practitioner,simple,uol_handbook,
+is there a nursery for my child on campus,The University’s purpose-built nursery is located on campus,simple,uol_handbook,
+what happens if I get called for jury duty,From time to time students are called for jury service,conditional,uol_handbook,
+my friend and I wrote our essays together is that allowed,two or more students consciously collaborate in the preparation and production of work,conditional,uol_handbook,
+can I use ChatGPT to write my assignment,generated or completed by Generative Artificial Intelligence (GAI) software,conditional,uol_handbook,
+can the external examiner see my coursework,External examiners have the right to see all assessed work from the modules they examine,simple,uol_handbook,
+can I pay my tuition fees in instalments,Payment of tuition fees can either be made in full or in instalment plans,conditional,uol_handbook,
+what if I'm too ill to ever resit my exams,a Board of Examiners may award an aegrotat degree,conditional,uol_handbook,
+I want to complain about my course where do I start,The majority of complaints can be resolved within the area in which a student has a concern,simple,uol_handbook,
+where is the Student Life Centre,The Student Life Centre located in the Alsop Building,simple,uol_handbook,
+what happens if I don't complete registration as an international student,reporting their nonattendance to the UK Home Office,conditional,uol_handbook,
+can I take a break from my studies for health reasons,sort out other problems without financial or academic penalty before you return and restart your studies,conditional,uol_handbook,
+where can I talk to someone about my mental health,the Mental Health Advisory Service,simple,uol_handbook,
+can students disagree about controversial topics at the university,to think critically and to disagree well,simple,uol_handbook,
+can I expense a taxi after 9pm,,unanswerable,none,
+what is the company parental leave policy,The basic entitlement is to 18 weeks of unpaid leave in respect of each child,simple,faversham_hr,
+how do I get on the wifi with my laptop,connect to the University’s free Wi-Fi service,simple,uol_handbook,
+how much does a parking permit cost for students per year,,unanswerable,none,
+what mark do I need to pass a first year module,"Levels 4, 5 and 6 all carry a pass mark of 40%",simple,uol_handbook,
+how many days holiday do university staff get,,unanswerable,none,
+can I bring my dog into halls of residence,,unanswerable,none,
+what time does the library close on Sundays,,unanswerable,none,
+how much is the student gym membership per month,,unanswerable,none,
+how much notice do I need to give to book holiday,All requests for leave should be made at least 2 weeks in advance,superseded,faversham_hr_rev,at least 4 weeks in advance
+can I carry over unused holiday to next year,You may carry forward up to 10 days,superseded,faversham_hr_rev,You may carry forward up to 5 days
+when does the holiday year start,holiday year which runs from 01 April to 31 March,simple,faversham_hr,
+can I take three weeks off in one go,no more than two consecutive weeks,conditional,faversham_hr,
+what time do I have to call in sick by,by no later than 10am,superseded,faversham_hr_rev,by no later than 12 noon
+do I need a doctors note if I'm off sick for more than a week,Any absence of more than a week must be certified by,conditional,faversham_hr,
+can I call in sick with a hangover,Hangovers are not regarded as legitimate reasons to take sickness absence,simple,faversham_hr,
+do I get paid if I'm called for jury service,"Employees undertaking jury service or serving on public bodies, or undertaking public duties, will be entitled to paid time off",conditional,faversham_hr,
+how long is paternity leave,"entitled to two weeks of leave, which can be taken as two consecutive weeks",simple,faversham_hr,
+is paternity leave paid,Paternity leave is paid at full pay for both weeks,superseded,faversham_hr_rev,Paternity leave is payable at the statutory rate
+how far in advance do I have to ask for parental leave,A request to take parental leave should be submitted 21 days in advance,simple,faversham_hr,
+what happens if snow stops me getting into work,you will be required to take time from your annual leave allowance to cover any absence,conditional,faversham_hr,
+can I vape inside the office,The Council operates a smoke-free workplace,simple,faversham_hr,
+can I browse the internet for personal stuff at work,Personal use during working hours will be treated as misconduct,simple,faversham_hr,
+is my work email monitored,Monitoring of email usage takes place without notice,simple,faversham_hr,
+how do I claim back travel costs,you must complete an expense claim form and support the claim by submitting valid receipts,simple,faversham_hr,
+do I get paid time off for a dentist appointment,Paid leave will not normally be granted for non-emergency visits,conditional,faversham_hr,
+what is the council's pension contribution rate,,unanswerable,none,
+how much mileage allowance do I get per mile for using my own car,,unanswerable,none,
+can I bring my dog to the office,,unanswerable,none,
+how much is overtime paid per hour,,unanswerable,none,
+what's the biggest email attachment I can send,Attachments greater than 20 megabytes will only be transmitted by special arrangement,simple,edc_ict_aup,
+how long until my old emails get archived,all email messages over 90 days old,simple,edc_ict_aup,
+I lost my work laptop how quickly do I have to report it,No longer than 1 full working day,simple,edc_ict_aup,
+my work phone got stolen from my car what do I do,the incident must be reported to the police as soon as possible,conditional,edc_ict_aup,
+can I plug my own USB stick into my work computer,Personal and unencrypted USB devices should not be attached to Council ICT facilities without prior authorisation,conditional,edc_ict_aup,
+can I auto forward my work email to my gmail,must not set mailbox rules to automatically forward email to an external,simple,edc_ict_aup,
+someone from IT phoned asking for my password what should I do,should verify their name on the intranet directory and call them back,simple,edc_ict_aup,
+can I use my work email for personal messages,"Must take place outwith working hours i.e. before or after work, during lunch or other breaks",conditional,edc_ict_aup,
+how do I mark a personal call on the office phone,Personal calls can be differentiated from business calls by appending an asterisk,simple,edc_ict_aup,
+what should I do when working on my laptop on the train,Position themselves so that work cannot be overlooked by another person,simple,edc_ict_aup,
+can I book a library computer for two hours,Sessions cannot exceed one hour if another user wishes to book a session,conditional,edc_ict_aup,
+do I have to be a library member to use the library computers,You do not need to be a member of the library to use ICT and Internet facilities,simple,edc_ict_aup,
+can my 14 year old use the library internet,"If you are under 16, we require a signed consent form from your parent or guardian",conditional,edc_ict_aup,
+how long is a library pc booking held if I'm late,A booking will be held for ten minutes from the start time,simple,edc_ict_aup,
+why did my password protected zip file get blocked by email,block password protected and encrypted documents,simple,edc_ict_aup,
+what is the wifi password in the library,,unanswerable,none,
+how much does it cost to print a page at the library,,unanswerable,none,
+which VPN should I install on my home computer to work remotely,,unanswerable,none,
+how big is my email mailbox quota,,unanswerable,none,

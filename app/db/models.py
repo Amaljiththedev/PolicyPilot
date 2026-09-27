@@ -1,7 +1,7 @@
 from sqlalchemy import Index
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from typing import Optional, List
-from sqlalchemy import String, Text, Integer, Boolean, DateTime, ForeignKey, JSON
+from sqlalchemy import String, Text, Integer, Boolean, Date, DateTime, ForeignKey, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from pgvector.sqlalchemy import Vector
 
@@ -41,6 +41,15 @@ class Document(Base):
     file_hash: Mapped[str] = mapped_column(String(64), unique=True, index=True, nullable=False)
     uploaded_by: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     chunk_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+
+    # Phase 9: versions. All versions of one policy share a policy_key; only one is current.
+    policy_key: Mapped[Optional[str]] = mapped_column(String(120), index=True, nullable=True)
+    version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    is_current: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, index=True)
+    supersedes_id: Mapped[Optional[int]] = mapped_column(
+        Integer, ForeignKey("documents.id", ondelete="SET NULL"), nullable=True)
+    effective_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    organisation: Mapped[Optional[str]] = mapped_column(String(120), index=True, nullable=True)
 
     chunks: Mapped[List["Chunk"]] = relationship("Chunk", back_populates="document", cascade="all, delete-orphan")
 
