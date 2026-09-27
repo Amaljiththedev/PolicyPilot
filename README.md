@@ -2,7 +2,7 @@
 
 Question answering over policy documents, with citations, an honest "I don't know", and an evaluation harness that measures every change.
 
-> **Status:** in development. Ingestion, search and the retrieval eval harness are built and tested. Re-ranking experiments are in progress. Answer generation (`/ask`), policy versioning, Google Drive sync and the Slack bot are planned.
+> **Status:** working end to end on a laptop (Docker). Ingestion, retrieval with re-ranking, cited answers with refusal (`/ask`), policy versions, per-organisation scoping, Google sign-in, Google Drive sync, a Slack bot and an MCP server are built and tested (over 100 automated tests). Still open: the full answer-quality eval (paced by a free LLM tier), a chat web page, and deployment.
 
 ---
 
@@ -23,72 +23,95 @@ The third rule is about the engineering: **quality is shown with numbers, not cl
 
 ```mermaid
 flowchart LR
-  subgraph Ingest["Write path (once per document)"]
-    U[POST /documents] --> V{Validate<br/>type, size, SHA-256 dup}
-    V --> P[Parse<br/>PDF, DOCX, HTML, TXT]
-    P --> C[Chunk<br/>recursive, 1000 / 200]
-    C --> E[Embed<br/>bge-small-en-v1.5, 384-d]
-    E --> DB[(PostgreSQL + pgvector<br/>HNSW cosine index)]
+  subgraph Sources["Where policies come from"]
+    UP[POST /documents<br/>PDF, DOCX, HTML, TXT]
+    GD[Google Drive folder<br/>incremental sync]
   end
 
-  subgraph Read["Read path (once per question)"]
-    Q[POST /search] --> QE[Embed query<br/>with BGE prefix]
-    QE --> VS[Vector search<br/>top k or top 20]
-    VS --> RR{Re-rank?<br/>cross / llm_point / llm_list}
-    RR --> R[Ranked chunks + scores]
+  subgraph Ingest["Write path"]
+    V{Validate<br/>type, size, SHA-256 dup} --> P[Parse + clean]
+    P --> C[Chunk 1000 / 200]
+    C --> E[Embed bge-small, 384-d]
+    E --> VER[Version link<br/>same policy_key: old version superseded]
   end
+  UP --> V
+  GD --> V
+  VER --> DB[(PostgreSQL + pgvector<br/>documents, chunks, queries, feedback)]
 
-  DB --> VS
+  subgraph Read["Read path"]
+    Q[Question] --> S[Vector search<br/>current versions, user's organisation]
+    S --> RR[MiniLM cross-encoder<br/>fused with RRF]
+    RR --> LLM[LLM: quote, then answer<br/>JSON, temperature 0]
+    LLM --> CHK{Checks in code<br/>citations valid? quote exists?}
+    CHK -->|yes| A[Answer + citations]
+    CHK -->|no| X[Refuse + escalate]
+  end
+  DB --> S
+
+  subgraph Channels["Where people ask"]
+    API[REST /ask /search]
+    SL[Slack bot<br/>threads, reactions = feedback]
+    MCP[MCP server<br/>Claude Desktop, Cursor]
+  end
+  API --> Q
+  SL --> Q
+  MCP --> Q
+  A --> LOG[(Every question logged<br/>source: api / slack / mcp)]
+  X --> LOG
 
   subgraph Evals["Evaluation harness"]
-    G[golden_set.csv<br/>37 hand-labelled Qs] --> RUN[evals.run]
-    S[generate.py<br/>synthetic Qs via LLM] --> RUN
-    RUN --> M[recall@k, MRR, nDCG@10<br/>strict + lenient, per slice, latency]
-    M --> J[results/*.json]
+    G[golden_set.csv<br/>77 Qs, 3 documents] --> RUN[evals.run: retrieval]
+    G --> RA[evals.run_answers: answers<br/>independent LLM judge]
   end
-
-  RUN -.calls.-> Q
 ```
 
 ### Components
 
 | Layer | What it does | Key choices |
 |---|---|---|
-| **API** | FastAPI with JWT bearer auth, role-based access (staff / admin) | bcrypt hashing, identical errors for unknown email and wrong password, 401 vs 403 |
-| **Parsing** | Extracts text from PDF, DOCX (including tables), HTML (noise tags stripped), TXT | Rejects empty or scanned files loudly instead of storing nothing |
-| **Chunking** | Recursive splitter that prefers paragraph, then sentence, boundaries | Size and overlap come from config, so chunking can be tested as an experiment |
-| **Embeddings** | `BAAI/bge-small-en-v1.5`, local, 384 dimensions, normalised | Free and unlimited, which matters because evals re-run many times. Dimension checked against the DB column at startup |
-| **Storage** | PostgreSQL + pgvector, HNSW index (`m=16`, `ef_construction=64`) | One database for records and vectors: supersession is a join, hybrid search can use Postgres full-text |
-| **Upload** | Document and all its chunks written in one transaction | A failure can never leave a half-ingested document |
-| **Search** | Cosine distance, ready documents only, optional re-ranking | Re-ranking is a strategy chosen by config or flag |
-| **Re-ranking** | Cross-encoder, LLM pointwise, LLM listwise behind one interface | LLM output is repaired (duplicates, invalid indices, missing items) rather than trusted |
-| **LLM access** | Any OpenAI-compatible provider (Groq, Ollama, Cerebras) | Provider is set in `.env`, not in code. Throttled for free-tier limits, `temperature=0` for repeatable evals |
+| **Sign-in** | Google OAuth (authorization code); PolicyPilot issues its own JWT | Domain allow-list, `ADMIN_EMAILS`, account linking by email. Password login off by default; `scripts/dev_token.py` for local work |
+| **Parsing** | PDF, DOCX (incl. tables), HTML, TXT; repeating footers stripped | Rejects empty/scanned files loudly; strips the byte-order mark Google Docs adds |
+| **Chunking** | Recursive splitter, 1000 / 200 | Chosen by measurement: 500 split conditional rules, 1500 ranked worse |
+| **Embeddings** | `BAAI/bge-small-en-v1.5`, local, 384-d | Free and unlimited, so evals can re-run constantly |
+| **Storage** | PostgreSQL + pgvector (HNSW) | Records and vectors in one database, so versions and organisation are plain filters |
+| **Retrieval** | Vector search, then MiniLM cross-encoder fused with the vector rank (RRF) | Hybrid keyword search is implemented but lost on this corpus, so it is off |
+| **Answering** | One LLM call returns JSON: quote, answer, citations | Citations and quote are verified in code; failures become refusals with `escalate=true` |
+| **Versions** | Documents sharing a `policy_key` form a chain; only the current one is searched | `GET /documents/{id}/changes` gives a sentence-level diff |
+| **Organisations** | Each document and user has an organisation | A user's organisation is the default search scope, so two employers' rules don't mix |
+| **Drive sync** | Read-only OAuth, encrypted refresh token, incremental by `modifiedTime` | An edited Doc becomes a new version automatically; a removed file leaves search |
+| **Slack** | Socket Mode bot: threaded cited answers, tags a person on refusal | 👍/👎 reactions are stored as feedback; no public URL needed |
+| **MCP** | `ask_policy`, `search_policies`, `list_policies`, `policy_changes` | Same code path and logging as `/ask` |
+| **LLM access** | Any OpenAI-compatible provider (Groq, Ollama) | Throttled, failures counted and surfaced, non-retryable errors fail fast |
 
 ### Repository layout
 
 ```
 app/
-  api/routes/        auth, document_upload, search, health
-  api/services/      chunking, embeddings, retrieval, reranker, llm
-  api/ingestion/     parser
-  core/              config, security
-  db/                models, session
+  api/routes/        auth (Google), documents, search, ask, drive, health
+  api/services/      retrieval, reranker, answer, versioning, ingest, google_oauth, query_log, llm
+  api/ingestion/     parser, cleaning, titles
+  integrations/      gdrive (sync), slack_bot (logic)
+  mcp_server.py      MCP server (stdio)
+  core/ db/ schemas/
+scripts/             migrations, rechunk, make_revision, drive_sync, slack_bot, dev_token,
+                     p9_run.ps1, mcp_claude.cmd, mcp_debug.ps1
+corpus/              the 3 public test documents + download script
 evals/
-  data/golden_set.csv      hand-labelled questions with evidence quotes
-  generate.py              synthetic question generator (LLM, verified)
-  metrics.py               is_hit, first_hit_rank, recall@k, MRR, nDCG@k
-  run.py                   runs every question through search, saves results
-  inspect_rerank.py        side-by-side top chunks, vector vs re-ranked
-  check_batch.py           batched vs single cross-encoder scores
-  results/                 one JSON per run, with config and per-question ranks
-tests/                     55 tests (unit + retrieval against real Postgres)
+  data/golden_set.csv    77 questions: evidence quote, slice, document, stale wording
+  run.py                 retrieval eval (recall, MRR, nDCG, bootstrap CIs, per document)
+  run_answers.py         answer eval (refusals, citation accuracy, LLM-judged faithfulness)
+  compare.py             paired bootstrap between two runs
+  check_golden.py        every evidence quote verified with the app's own parser
+  results/               one JSON per run
+docs/integrations.md     Google, Drive, Slack and MCP setup
+tests/                   unit tests + tests against real Postgres
 ```
 
 ---
 
 ## Evaluation method
 
-**Golden set:** 37 hand-written questions against the University of Liverpool student handbook (43 pages, 290 chunks), each with an evidence quote checked by script to exist word for word in the source. Slices: 22 simple, 8 conditional, 7 unanswerable.
+**Golden set:** 77 hand-written questions across three public documents in different styles: the University of Liverpool student handbook, a UK town council HR handbook (Faversham) and a Scottish council ICT acceptable-use policy (East Dunbartonshire, written for five audiences). 63 are answerable (simple, conditional, and 4 `superseded` rules whose wording changed in a revision), 14 are unanswerable. Every evidence quote is checked against the app's own parser by `evals/check_golden.py`.
 
 **Synthetic set:** `generate.py` splits a document's extracted text into windows, asks an LLM for realistic questions with an exact evidence quote, then rejects any item whose quote doesn't appear in the source or whose wording copies it. It works on extracted text, so it works for any file format.
 
@@ -97,7 +120,9 @@ tests/                     55 tests (unit + retrieval against real Postgres)
 - **strict:** exact quote match only
 - **lenient:** exact match, or at least 60% of the evidence's words present
 
-**Metrics:** recall@1, @5, @10, MRR, nDCG@10, per slice, plus median and max latency per question. Every run saves its config and every question's rank to `evals/results/`.
+**Retrieval metrics:** recall@1, @5, @10, MRR, nDCG@10, per slice and per document, 95% bootstrap intervals, latency. For superseded rules: is the new wording in the top 5, and did the old wording leak in.
+
+**Answer metrics (`run_answers.py`):** unanswerable questions refused, answerable questions wrongly refused, citation accuracy (a cited passage contains the evidence), and faithfulness: a judge from a different model family (Qwen, while answers come from gpt-oss) checks every claim against the cited passages. Runs save after every question and resume, because the free LLM tier has a daily token cap.
 
 ---
 
@@ -251,55 +276,67 @@ Versions: documents sharing a `policy_key` form a version chain. Uploading a new
 
 The answer eval found a serious generation error: asked whether a doctor's note is needed after more than a week off sick, the model said no, inverting a passage that lists three thresholds (4 days, a week, three weeks). Retrieval and the citation were correct; the model misread. The LLM judge caught it (faithfulness 0.33). Next fix to test: make the model quote the governing sentence before answering.
 
+### 11. Integrations: what broke, and why
+
+Two integrations broke the same way: an unpinned dependency jumped a major version inside a fresh Docker build. SQLAlchemy 2.1 switched to psycopg 3 (which then exposed a string-vs-integer user-id comparison that psycopg2 had silently cast), and `mcp` 2.x renamed `FastMCP`. Both are now pinned below the next major version, and `requirements.lock` records the tested set.
+
+Google: plain sign-in works for any account, but Drive access (a sensitive scope) only works for accounts listed as test users while the app is unverified, and the Drive API must be enabled separately. The sync stores its last error on the connection, which made both problems obvious. Drive-edit end to end: a Google Doc changed from 25 to 28 days of leave was re-synced as version 2, and search, Slack and MCP all answered 28.
+
+MCP on Windows: Claude Desktop from the Microsoft Store keeps its config under `%LOCALAPPDATA%\Packages\Claude_*\LocalCache\Roaming\Claude`, not `%APPDATA%\Claude`. A launcher script that logs stderr (`scripts/mcp_claude.cmd`) turned "Server disconnected" into a readable cause (the container was being rebuilt). The first question also timed out at 60 s while models loaded, so the server now loads them in the background at start-up.
+
+### 12. Prompt v3: quote first, then answer
+
+The answer eval caught a dangerous error: asked whether a doctor's note is needed after more than a week off sick, the model said no. It had the right passage but mixed up three thresholds (4 days, a week, three weeks). Prompt v3 makes the model copy the deciding sentence before answering, and the code refuses any answer whose quote isn't in the retrieved passages.
+
+The first version of that check was too strict: it compared words, and the PDF text reads "selfcertification" where the model writes "self-certification", so a correct answer was refused. It now compares letters only. The lesson is the one the eval is built around: a new safety check has to be measured for wrong refusals as well as wrong answers before it ships. v3 is being measured with `run_answers --prompt v3`.
+
 ---
 
 ## Next experiments
 
-1. ~~Score fusion~~ and ~~a smaller re-ranker~~: done, see results.
-2. **`BAAI/bge-reranker-v2-m3`:** newer and stronger, to check whether model quality or model size was the issue.
-3. ~~LLM listwise re-ranking~~: done. Possible follow-up: full chunk text instead of 600 characters, and 20 candidates, to test whether truncation held it back.
-4. ~~Strip page footers~~: done, see finding 1e. **Next:** grow the eval set (synthetic questions plus a second document) and report bootstrap confidence intervals, so small differences can be told apart from noise. Heading-aware chunking after that.
-5. ~~Hybrid search~~: done, lost on this corpus (see Phase 7 ablation).
-6. **More documents:** a single handbook makes retrieval easier than a real corpus would.
-
-Then: ~~`/ask` with citations and abstention~~ (built), answer-level metrics (running: `evals/run_answers.py`), policy versioning, Drive sync, Slack, deployment with the eval harness gating CI.
+1. **Finish the answer eval** for prompt v3 across all 77 questions and compare with v2 (paired): fewer wrong answers without more wrong refusals is the bar. That closes Phase 8.
+2. **Grow the eval set:** synthetic questions per document (verified by hand), then real questions from the query log.
+3. **Chat web page** with Google sign-in, so non-developers can use it.
+4. **Deploy**, with the eval harness as a CI gate on every merge.
+5. Retrieval follow-ups: `bge-reranker-v2-m3`; query rewriting for vocabulary gaps ("IT" vs "ICT", "phoned" vs "receives a call").
 
 ---
 
 ## Running it
 
+Everything runs in Docker. Setup for Google, Drive, Slack and MCP: [`docs/integrations.md`](docs/integrations.md).
+
 ```powershell
-docker compose up -d                       # Postgres + pgvector
-pip install -r requirements.txt
-python scripts/create_tables.py
-python -m uvicorn app.main:app --reload    # API docs at http://localhost:8000/docs
-python -m pytest -q                        # 55 tests
+copy .env.example .env                      # then fill in LLM + Google settings
+docker compose up -d --build                # API on http://localhost:8000/docs
+docker compose exec api python -m pytest -q
+docker compose exec api python scripts/dev_token.py --email you@example.com --admin   # local token
 ```
+
+Optional workers: `docker compose --profile slack --profile drive up -d`.
 
 Evals:
 
 ```powershell
-python -m evals.run --name baseline
-python -m evals.run --name rerank_cross --rerank-strategy cross
-python -m evals.run --name rerank_llm_list --rerank-strategy llm_list
-python -m evals.generate --document-id <id> --dry-run
-python -m evals.inspect_rerank
+docker compose exec api python -m evals.check_golden
+docker compose exec api python -m evals.run --name latest --rerank-strategy cross_fused --rerank-model cross-encoder/ms-marco-MiniLM-L-6-v2
+docker compose exec api python -m evals.run_answers --name answers_v3 --prompt v3      # resumable
+docker compose exec api python -m evals.compare evals/results/A.json evals/results/B.json
+powershell -ExecutionPolicy Bypass -File scripts/p9_run.ps1                          # versioning gate
 ```
-
-`.env` settings: `DATABASE_URL`, `JWT_SECRET`, `CHUNK_SIZE`, `CHUNK_OVERLAP`, `EMBEDDING_MODEL`, `EMBEDDING_DIMENSION`, `LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL`, `LLM_MIN_INTERVAL`, `RERANK_MODEL`, `RERANK_CANDIDATES`.
 
 ---
 
 ## Limitations
 
-- One document, 30 answerable questions. Results are directional, not statistically robust.
-- Strict and lenient matching bracket the true recall; neither is exact.
-- Latency is measured on a laptop CPU with no GPU.
-- No answer generation yet, so there are no answer-quality or abstention metrics.
-- Not deployed.
+- Three documents and 77 questions: enough to see large effects and narrow the intervals, not enough to separate close configurations.
+- The answer eval is paced by a free LLM tier (about 200k tokens a day), so full runs take more than one day.
+- The LLM judge is itself a model; it caught real errors, but its grades are not ground truth.
+- Latency is measured on a laptop CPU.
+- Runs locally only; there is no chat web page yet.
 
 ---
 
 ## Stack
 
-Python, FastAPI, SQLAlchemy, PostgreSQL + pgvector, sentence-transformers, LangChain text splitters, pypdf, python-docx, BeautifulSoup, PyJWT, bcrypt, pytest, Docker. LLMs via Groq or Ollama.
+Python, FastAPI, SQLAlchemy, PostgreSQL + pgvector, sentence-transformers, LangChain text splitters, pypdf, python-docx, BeautifulSoup, PyJWT, google-auth, cryptography, slack_sdk, MCP Python SDK, pytest, Docker. LLMs via Groq (gpt-oss-120b answers, Qwen judge) or Ollama.
