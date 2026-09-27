@@ -166,6 +166,9 @@ def _call(session, query, top_k):
 
 @pytest.fixture
 def seeded(db):
+    # Hide any real documents already in the DB (e.g. the uploaded handbook) so only
+    # the test vectors are searchable. Rolled back with everything else after the test.
+    db.execute(text("UPDATE documents SET status = 'hidden_for_test'"))
     leave = _doc(db, "Leave Policy")
     expenses = _doc(db, "Expenses Policy")
     draft = _doc(db, "Draft Policy", status="processing")

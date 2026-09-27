@@ -1,0 +1,151 @@
+"""Re-ranking strategies: cross-encoder, LLM pointwise, LLM listwise."""
+from functools import lru_cache
+
+from sentence_transformers import CrossEncoder
+
+from app.api.services.llm import chat_json
+from app.core.config import get_settings
+
+settings = get_settings()
+MAX_CHARS = 600   # trim each chunk in LLM prompts to keep them short
+
+
+# ---------- 1. cross-encoder ----------
+@lru_cache
+def get_cross_encoder() -> CrossEncoder:
+    return CrossEncoder(settings.RERANK_MODEL)
+
+
+def _cross(query: str, hits: list[dict]) -> list[float]:
+    return [float(s) for s in get_cross_encoder().predict([(query, h["text"]) for h in hits])]
+
+
+
+
+# ---------- 2. LLM pointwise ----------
+
+
+# ---------- 2. LLM pointwise: score each chunk on its own ----------
+POINT_PROMPT = """Rate how well the PASSAGE answers the QUESTION.
+0 = irrelevant, 5 = related but does not answer, 10 = directly answers it.
+Judge only what the passage says. Return JSON: {{"score": <integer 0-10>}}
+
+QUESTION: {q}
+PASSAGE: {p}"""
+
+
+def _llm_point(query: str, hits: list[dict]) -> list[float]:
+
+    scores = []
+    for hit in hits:
+        try:
+            s = chat_json(POINT_PROMPT.format(q=query, p=hit["text"][:MAX_CHARS]), max_tokens=50)
+            scores.append(float(s.get("score", 0)))
+        except Exception:
+            scores.append(-1.0)
+        return scores
+
+# ---------- 3. LLM listwise: order all chunks in one call ----------
+LIST_PROMPT = """Below are {n} passages, numbered [1] to [{n}].
+Rank them by how well they answer the QUESTION, most relevant first.
+Include every number exactly once.
+Return JSON: {{"ranking": [<numbers in order>]}}
+
+QUESTION: {q}
+
+{passages}"""
+
+
+
+"""Re-ranking strategies: cross-encoder, LLM pointwise, LLM listwise."""
+from functools import lru_cache
+
+from sentence_transformers import CrossEncoder
+
+from app.api.services.llm import chat_json
+from app.core.config import get_settings
+
+settings = get_settings()
+MAX_CHARS = 600   # trim each chunk in LLM prompts to keep them short
+
+
+# ---------- 1. cross-encoder ----------
+@lru_cache
+def get_cross_encoder() -> CrossEncoder:
+    return CrossEncoder(settings.RERANK_MODEL)
+
+
+def _cross(query: str, hits: list[dict]) -> list[float]:
+    return [float(s) for s in get_cross_encoder().predict([(query, h["text"]) for h in hits])]
+
+
+# ---------- 2. LLM pointwise: score each chunk on its own ----------
+POINT_PROMPT = """Rate how well the PASSAGE answers the QUESTION.
+0 = irrelevant, 5 = related but does not answer, 10 = directly answers it.
+Judge only what the passage says. Return JSON: {{"score": <integer 0-10>}}
+
+QUESTION: {q}
+PASSAGE: {p}"""
+
+
+def _llm_point(query: str, hits: list[dict]) -> list[float]:
+    scores = []
+    for h in hits:
+        try:
+            s = chat_json(POINT_PROMPT.format(q=query, p=h["text"][:MAX_CHARS]), max_tokens=50)
+            scores.append(float(s.get("score", 0)))
+        except Exception:
+            scores.append(-1.0)   # failed call: rank it last, don't crash the run
+    return scores
+
+
+# ---------- 3. LLM listwise: order all chunks in one call ----------
+LIST_PROMPT = """Below are {n} passages, numbered [1] to [{n}].
+Rank them by how well they answer the QUESTION, most relevant first.
+Include every number exactly once.
+Return JSON: {{"ranking": [<numbers in order>]}}
+
+QUESTION: {q}
+
+{passages}"""
+
+
+def _llm_list(query: str, hits: list[dict]) -> list[float]:
+    passages = "\n\n".join(f"[{i + 1}] {h['text'][:MAX_CHARS]}" for i, h in enumerate(hits))
+    try:
+        out = chat_json(LIST_PROMPT.format(n=len(hits), q=query, passages=passages), max_tokens=300)
+        order = [int(x) - 1 for x in out.get("ranking", [])]
+    except Exception:
+        order = []
+    # keep only valid, unique positions; append anything the LLM forgot, in original order
+    seen, clean = set(), []
+    for i in order + list(range(len(hits))):
+        if 0 <= i < len(hits) and i not in seen:
+            seen.add(i)
+            clean.append(i)
+    # convert the order into scores: first place gets the highest score
+    scores = [0.0] * len(hits)
+    for rank, i in enumerate(clean):
+        scores[i] = float(len(hits) - rank)
+    return scores
+
+
+STRATEGIES = {"cross": _cross, "llm_point": _llm_point, "llm_list": _llm_list}
+
+
+def rerank(query: str, hits: list[dict], top_k: int, strategy: str | None = None) -> list[dict]:
+    if not hits:
+        return []
+    strategy = strategy or settings.RERANK_STRATEGY
+    if strategy not in STRATEGIES:
+        raise ValueError(f"unknown rerank strategy: {strategy}")
+    scores = STRATEGIES[strategy](query, hits)
+    for h, s in zip(hits, scores):
+        h["vector_score"] = h["score"]
+        h["score"] = round(s, 4)
+    # sort by new score; ties broken by original vector score
+    hits.sort(key=lambda h: (h["score"], h["vector_score"]), reverse=True)
+    return hits[:top_k]
+
+
+    

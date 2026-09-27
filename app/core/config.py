@@ -32,12 +32,21 @@ class Settings(BaseSettings):
     LLM_BASE_URL: str = "https://api.cerebras.ai/v1"
     LLM_API_KEY: Optional[str] = None
     LLM_MODEL: str = "gpt-oss-120b"
+    LLM_MIN_INTERVAL: float = 0.0
 
 
     # Security
     JWT_SECRET: str = "supersecretjwtkey_change_in_production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
+
+    # Reranking
+    RERANK_ENABLED: bool = False
+    RERANK_STRATEGY: str = "cross"      # cross | llm_point | llm_list
+    RERANK_CANDIDATES: int = 20
+    RERANK_MODEL: str = "BAAI/bge-reranker-base"
+    LLM_RERANK_CANDIDATES: int = 10
+    LLM_NO_THINK: bool = True           # appends /no_think for Qwen3 models
 
 
     model_config = SettingsConfigDict(

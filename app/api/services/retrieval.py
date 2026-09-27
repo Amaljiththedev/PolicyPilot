@@ -2,39 +2,50 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.services.embeddings import embed_query
+from app.api.services.reranker import rerank
 from app.core.config import get_settings
 from app.db.models import Chunk, Document
 
 settings = get_settings()
 
 
-def search_chunks(db: Session, query: str, top_k: int | None = None) -> list[dict]:
+def search_chunks(
+    db: Session,
+    query: str,
+    top_k: int | None = None,
+    use_rerank: bool | None = None,
+    strategy: str | None = None,
+) -> list[dict]:
     """Return the top-k chunks most similar to the query, most similar first."""
     k = top_k or settings.TOP_K
+    if use_rerank is None:
+        use_rerank = settings.RERANK_ENABLED
+    strategy = strategy or settings.RERANK_STRATEGY
+    candidates = (
+        settings.RERANK_CANDIDATES if strategy.startswith("cross") else settings.LLM_RERANK_CANDIDATES
+    )
+    fetch = max(k, candidates) if use_rerank else k
 
-    # 1. question -> 384-d vector (embed_query adds the BGE query prefix)
     query_embedding = embed_query(query)
-
-    # 2. cosine distance: 0 = same direction, larger = less similar
     distance = Chunk.embedding.cosine_distance(query_embedding).label("distance")
-
-    # 3. nearest chunks from ready documents only
     stmt = (
         select(Chunk, Document.title, distance)
         .join(Document, Chunk.document_id == Document.id)
         .where(Document.status == "ready")
         .order_by(distance)
-        .limit(k)
+        .limit(fetch)
     )
-
-    return [
+    hits = [
         {
             "chunk_id": chunk.id,
             "document_id": chunk.document_id,
             "document_title": title,
             "chunk_index": chunk.chunk_index,
             "text": chunk.text,
-            "score": round(1 - float(dist), 4),  # distance -> similarity
+            "score": round(1 - float(dist), 4),
         }
         for chunk, title, dist in db.execute(stmt).all()
     ]
+    if use_rerank:
+        return rerank(query, hits, k, strategy)
+    return hits

@@ -1,0 +1,462 @@
+{
+  "name": "rerank_cross",
+  "created": "20260926-2224",
+  "config": {
+    "chunk_size": 1000,
+    "chunk_overlap": 200,
+    "strategy": "recursive",
+    "model": "BAAI/bge-small-en-v1.5",
+    "k": 10,
+    "rerank_strategy": "cross"
+  },
+  "metrics": {
+    "ALL (answerable)": {
+      "n": 30,
+      "recall@1": 0.467,
+      "recall@5": 0.933,
+      "recall@10": 1.0,
+      "mrr": 0.656,
+      "ndcg@10": 0.729,
+      "strict_R@1": 0.367,
+      "strict_R@5": 0.767,
+      "top_score_median": 0.9844
+    },
+    "hand:conditional": {
+      "n": 8,
+      "recall@1": 0.25,
+      "recall@5": 0.875,
+      "recall@10": 1.0,
+      "mrr": 0.479,
+      "ndcg@10": 0.594,
+      "strict_R@1": 0.125,
+      "strict_R@5": 0.625
+    },
+    "hand:simple": {
+      "n": 22,
+      "recall@1": 0.545,
+      "recall@5": 0.955,
+      "recall@10": 1.0,
+      "mrr": 0.72,
+      "ndcg@10": 0.778,
+      "strict_R@1": 0.455,
+      "strict_R@5": 0.818
+    },
+    "hand:unanswerable": {
+      "n": 7,
+      "top_score_median": 0.1593
+    },
+    "unanswerable": {
+      "n": 7,
+      "top_score_median": 0.1593
+    }
+  },
+  "items": [
+    {
+      "question": "who do I call in an emergency on campus",
+      "evidence": "call 2222 on any University phone",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 2,
+      "strict_rank": 10,
+      "ndcg@10": 0.7500059677816915,
+      "top_score": 0.9839,
+      "latency_ms": 51173
+    },
+    {
+      "question": "do I need a TV licence to watch TV in my room",
+      "evidence": "it is a legal requirement to obtain a television licence",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 1,
+      "strict_rank": 1,
+      "ndcg@10": 1.0,
+      "top_score": 0.6265,
+      "latency_ms": 5725
+    },
+    {
+      "question": "my landlord wants proof I'm a student so I don't pay council tax",
+      "evidence": "Council Tax Student Certificate",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 1,
+      "strict_rank": 1,
+      "ndcg@10": 0.9197207891481876,
+      "top_score": 0.5743,
+      "latency_ms": 6473
+    },
+    {
+      "question": "I lost my student card how do I get a new one",
+      "evidence": "Replacement smart cards can be requested online",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 1,
+      "strict_rank": 1,
+      "ndcg@10": 1.0,
+      "top_score": 0.7574,
+      "latency_ms": 7265
+    },
+    {
+      "question": "what counts as copying someone else's work",
+      "evidence": "Plagiarism occurs when a student misrepresents the work or ideas",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 5,
+      "strict_rank": 7,
+      "ndcg@10": 0.5171426372778061,
+      "top_score": 0.9475,
+      "latency_ms": 7045
+    },
+    {
+      "question": "how do I report harassment anonymously",
+      "evidence": "let us know anonymously",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 3,
+      "strict_rank": 3,
+      "ndcg@10": 0.5,
+      "top_score": 0.9992,
+      "latency_ms": 5609
+    },
+    {
+      "question": "I was ill during exams can I get extra consideration",
+      "evidence": "Personal Exceptional Circumstances",
+      "slice": "conditional",
+      "source": "hand",
+      "rank": 3,
+      "strict_rank": 4,
+      "ndcg@10": 0.6669000641169921,
+      "top_score": 0.6286,
+      "latency_ms": 6629
+    },
+    {
+      "question": "when does welcome week start",
+      "evidence": "Welcome Week Monday 15 September 2025 to Friday 19 September 2025",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 1,
+      "strict_rank": 1,
+      "ndcg@10": 0.8175295903539445,
+      "top_score": 0.995,
+      "latency_ms": 8630
+    },
+    {
+      "question": "when is the spring break this year",
+      "evidence": "Spring Break Monday 23March 2026 to Friday 10 April 2026",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 2,
+      "strict_rank": 2,
+      "ndcg@10": 0.6934264036172708,
+      "top_score": 0.9976,
+      "latency_ms": 10780
+    },
+    {
+      "question": "when are graduation ceremonies",
+      "evidence": "Graduation 2026 Ceremonies Monday 13 July to Friday 17 July 2026",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 2,
+      "strict_rank": 2,
+      "ndcg@10": 0.6309297535714575,
+      "top_score": 0.9461,
+      "latency_ms": 10610
+    },
+    {
+      "question": "how much is the fine for watching TV without a licence",
+      "evidence": "failure to do so can lead to a fine of up to \u00a31,000",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 1,
+      "strict_rank": 1,
+      "ndcg@10": 1.0,
+      "top_score": 0.9746,
+      "latency_ms": 8298
+    },
+    {
+      "question": "how much does a TV licence cost",
+      "evidence": "The current cost of the TV licence is \u00a3169.50 for a standard licence",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 1,
+      "strict_rank": 1,
+      "ndcg@10": 1.0,
+      "top_score": 0.9982,
+      "latency_ms": 6020
+    },
+    {
+      "question": "is there a cheap bus home late at night",
+      "evidence": "The N1 Night bus runs from Birkenhead to Allerton every Thursday",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 5,
+      "strict_rank": 5,
+      "ndcg@10": 0.38685280723454163,
+      "top_score": 0.7703,
+      "latency_ms": 5340
+    },
+    {
+      "question": "how much is a young persons railcard",
+      "evidence": "may be purchased for \u00a330 by anyone aged 16-25",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 1,
+      "strict_rank": 1,
+      "ndcg@10": 1.0,
+      "top_score": 0.9982,
+      "latency_ms": 5472
+    },
+    {
+      "question": "do I need to sign up with a doctor in Liverpool",
+      "evidence": "it is important that you register with a local General Practitioner",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 2,
+      "strict_rank": 2,
+      "ndcg@10": 0.6546154994739983,
+      "top_score": 0.5139,
+      "latency_ms": 5180
+    },
+    {
+      "question": "is there a nursery for my child on campus",
+      "evidence": "The University\u2019s purpose-built nursery is located on campus",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 1,
+      "strict_rank": 3,
+      "ndcg@10": 0.8777173555755364,
+      "top_score": 0.9849,
+      "latency_ms": 5910
+    },
+    {
+      "question": "what happens if I get called for jury duty",
+      "evidence": "From time to time students are called for jury service",
+      "slice": "conditional",
+      "source": "hand",
+      "rank": 3,
+      "strict_rank": 3,
+      "ndcg@10": 0.5,
+      "top_score": 0.9929,
+      "latency_ms": 4817
+    },
+    {
+      "question": "my friend and I wrote our essays together is that allowed",
+      "evidence": "two or more students consciously collaborate in the preparation and production of work",
+      "slice": "conditional",
+      "source": "hand",
+      "rank": 3,
+      "strict_rank": null,
+      "ndcg@10": 0.5,
+      "top_score": 0.998,
+      "latency_ms": 5448
+    },
+    {
+      "question": "can I use ChatGPT to write my assignment",
+      "evidence": "generated or completed by Generative Artificial Intelligence (GAI) software",
+      "slice": "conditional",
+      "source": "hand",
+      "rank": 6,
+      "strict_rank": 6,
+      "ndcg@10": 0.3562071871080222,
+      "top_score": 0.3097,
+      "latency_ms": 5333
+    },
+    {
+      "question": "can the external examiner see my coursework",
+      "evidence": "External examiners have the right to see all assessed work from the modules they examine",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 2,
+      "strict_rank": 2,
+      "ndcg@10": 0.5640920940185894,
+      "top_score": 0.9983,
+      "latency_ms": 5370
+    },
+    {
+      "question": "can I pay my tuition fees in instalments",
+      "evidence": "Payment of tuition fees can either be made in full or in instalment plans",
+      "slice": "conditional",
+      "source": "hand",
+      "rank": 1,
+      "strict_rank": 1,
+      "ndcg@10": 0.9060254355346823,
+      "top_score": 0.9214,
+      "latency_ms": 5694
+    },
+    {
+      "question": "what if I'm too ill to ever resit my exams",
+      "evidence": "a Board of Examiners may award an aegrotat degree",
+      "slice": "conditional",
+      "source": "hand",
+      "rank": 1,
+      "strict_rank": 9,
+      "ndcg@10": 0.8002671129756275,
+      "top_score": 0.988,
+      "latency_ms": 5323
+    },
+    {
+      "question": "I want to complain about my course where do I start",
+      "evidence": "The majority of complaints can be resolved within the area in which a student has a concern",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 1,
+      "strict_rank": 2,
+      "ndcg@10": 0.9682087825918937,
+      "top_score": 0.9996,
+      "latency_ms": 4510
+    },
+    {
+      "question": "where is the Student Life Centre",
+      "evidence": "The Student Life Centre located in the Alsop Building",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 1,
+      "strict_rank": 1,
+      "ndcg@10": 1.0,
+      "top_score": 0.9996,
+      "latency_ms": 6606
+    },
+    {
+      "question": "what happens if I don't complete registration as an international student",
+      "evidence": "reporting their nonattendance to the UK Home Office",
+      "slice": "conditional",
+      "source": "hand",
+      "rank": 3,
+      "strict_rank": 3,
+      "ndcg@10": 0.5239472913541398,
+      "top_score": 0.9987,
+      "latency_ms": 6252
+    },
+    {
+      "question": "can I take a break from my studies for health reasons",
+      "evidence": "sort out other problems without financial or academic penalty before you return and restart your studies",
+      "slice": "conditional",
+      "source": "hand",
+      "rank": 3,
+      "strict_rank": 3,
+      "ndcg@10": 0.5,
+      "top_score": 0.9853,
+      "latency_ms": 5441
+    },
+    {
+      "question": "where can I talk to someone about my mental health",
+      "evidence": "the Mental Health Advisory Service",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 1,
+      "strict_rank": 1,
+      "ndcg@10": 0.9136388903869314,
+      "top_score": 0.3093,
+      "latency_ms": 5907
+    },
+    {
+      "question": "can students disagree about controversial topics at the university",
+      "evidence": "to think critically and to disagree well",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 9,
+      "strict_rank": 9,
+      "ndcg@10": 0.3010299956639812,
+      "top_score": 0.9997,
+      "latency_ms": 5384
+    },
+    {
+      "question": "can I expense a taxi after 9pm",
+      "evidence": "",
+      "slice": "unanswerable",
+      "source": "hand",
+      "rank": null,
+      "strict_rank": null,
+      "ndcg@10": null,
+      "top_score": 0.006,
+      "latency_ms": 5789
+    },
+    {
+      "question": "what is the company parental leave policy",
+      "evidence": "",
+      "slice": "unanswerable",
+      "source": "hand",
+      "rank": null,
+      "strict_rank": null,
+      "ndcg@10": null,
+      "top_score": 0.0332,
+      "latency_ms": 5388
+    },
+    {
+      "question": "how do I get on the wifi with my laptop",
+      "evidence": "connect to the University\u2019s free Wi-Fi service",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 1,
+      "strict_rank": 1,
+      "ndcg@10": 1.0,
+      "top_score": 0.4657,
+      "latency_ms": 5828
+    },
+    {
+      "question": "how much does a parking permit cost for students per year",
+      "evidence": "",
+      "slice": "unanswerable",
+      "source": "hand",
+      "rank": null,
+      "strict_rank": null,
+      "ndcg@10": null,
+      "top_score": 0.1593,
+      "latency_ms": 10113
+    },
+    {
+      "question": "what mark do I need to pass a first year module",
+      "evidence": "Levels 4, 5 and 6 all carry a pass mark of 40%",
+      "slice": "simple",
+      "source": "hand",
+      "rank": 2,
+      "strict_rank": null,
+      "ndcg@10": 0.6240505200038379,
+      "top_score": 0.9692,
+      "latency_ms": 11883
+    },
+    {
+      "question": "how many days holiday do university staff get",
+      "evidence": "",
+      "slice": "unanswerable",
+      "source": "hand",
+      "rank": null,
+      "strict_rank": null,
+      "ndcg@10": null,
+      "top_score": 0.852,
+      "latency_ms": 10373
+    },
+    {
+      "question": "can I bring my dog into halls of residence",
+      "evidence": "",
+      "slice": "unanswerable",
+      "source": "hand",
+      "rank": null,
+      "strict_rank": null,
+      "ndcg@10": null,
+      "top_score": 0.077,
+      "latency_ms": 10268
+    },
+    {
+      "question": "what time does the library close on Sundays",
+      "evidence": "",
+      "slice": "unanswerable",
+      "source": "hand",
+      "rank": null,
+      "strict_rank": null,
+      "ndcg@10": null,
+      "top_score": 0.336,
+      "latency_ms": 7217
+    },
+    {
+      "question": "how much is the student gym membership per month",
+      "evidence": "",
+      "slice": "unanswerable",
+      "source": "hand",
+      "rank": null,
+      "strict_rank": null,
+      "ndcg@10": null,
+      "top_score": 0.5926,
+      "latency_ms": 7731
+    }
+  ]
+}
