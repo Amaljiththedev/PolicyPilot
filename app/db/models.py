@@ -76,6 +76,14 @@ class Query(Base):
     user_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     prompt: Mapped[str] = mapped_column(Text, nullable=False)
     response: Mapped[str] = mapped_column(Text, nullable=False)
+    # Phase 8: what the answer was built from, and whether it was refused
+    source_chunk_ids: Mapped[Optional[List[int]]] = mapped_column(JSON, nullable=True)
+    cited_chunk_ids: Mapped[Optional[List[int]]] = mapped_column(JSON, nullable=True)
+    answerable: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
+    escalated: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    refusal_reason: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    latency_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    model: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
@@ -96,5 +104,3 @@ class Feedback(Base):
     )
 
     query: Mapped["Query"] = relationship("Query", back_populates="feedbacks")
-
-    source_chunk_ids: Mapped[Optional[List[int]]] = mapped_column(JSON, nullable=True)

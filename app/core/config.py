@@ -40,6 +40,13 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
 
+    # First-stage search: vector | keyword | hybrid
+    SEARCH_MODE: str = "vector"
+    HYBRID_CANDIDATES: int = 30        # per retriever, before RRF
+
+    # Answering (Phase 8)
+    ANSWER_TOP_K: int = 5
+
     # Reranking
     RERANK_ENABLED: bool = False
     RERANK_STRATEGY: str = "cross"      # cross | llm_point | llm_list

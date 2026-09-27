@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+.git
+.venv
+venv
+env
+__pycache__
+*.pyc
+.pytest_cache
+_to_delete
+*.tgz
+Important Files
+evals/results
+.vscode
+.idea

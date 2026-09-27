@@ -1,3 +1,6 @@
+# Whole app:   docker compose up --build        -> API on http://localhost:8000/docs
+# Tests:       docker compose exec api python -m pytest -q
+# Evals:       docker compose exec api python -m evals.run --name docker_check
 services:
   db:
     image: pgvector/pgvector:pg16
@@ -8,9 +11,33 @@ services:
       POSTGRES_PASSWORD: policypilot
       POSTGRES_DB: policypilot
     ports:
-      - "5432:5432"
+      - "5432:5432"          # still reachable from your laptop for local dev
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U policypilot -d policypilot"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build: .
+    container_name: policypilot_api
+    restart: unless-stopped
+    env_file: .env           # API keys + settings; never baked into the image
+    environment:
+      # inside Docker the database is the "db" service, not localhost
+      DATABASE_URL: postgresql://policypilot:policypilot@db:5432/policypilot
+      HF_HUB_OFFLINE: "1"    # models are already in the image
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./evals:/app/evals   # eval data in, result JSONs out, straight to your folder
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # lets the container reach Ollama on your laptop
 
 volumes:
   postgres_data:

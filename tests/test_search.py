@@ -157,11 +157,8 @@ def _chunk(session, doc, idx, txt, vec):
 
 
 def _call(session, query, top_k):
-    # works whether the signature is (db, query, top_k) or (query, db, top_k)
-    try:
-        return search_chunks(session, query, top_k)
-    except (AttributeError, TypeError):
-        return search_chunks(query, session, top_k)
+    # these tests cover plain vector retrieval, so pin it: .env may enable re-ranking or hybrid
+    return search_chunks(session, query, top_k, use_rerank=False, mode="vector")
 
 
 @pytest.fixture
