@@ -1,0 +1,152 @@
+{
+  "name": "smoke",
+  "kind": "answers",
+  "config": {
+    "prompt": "v2",
+    "answer_model": "openai/gpt-oss-120b",
+    "judge_model": "qwen/qwen3.8-27b",
+    "top_k": 5,
+    "rerank": "cross_fused"
+  },
+  "metrics": {
+    "n": 3,
+    "llm_errors": 0,
+    "unanswerable_refused": "0/0",
+    "false_refusals": "0/3",
+    "false_refusals_with_evidence_retrieved": 0,
+    "citation_accuracy": 1,
+    "inline_citations": 0.667,
+    "faithfulness": 1.0,
+    "faithfulness_95ci": [
+      1.0,
+      1.0
+    ],
+    "fully_faithful_answers": "3/3",
+    "correct": 3,
+    "partial": 0,
+    "wrong": 0,
+    "condition_kept": null,
+    "latency_ms_median": 19511
+  },
+  "gates": {
+    "all unanswerable refused": [],
+    "false refusals <= 2": true,
+    "faithfulness >= 0.9": true,
+    "citation accuracy >= 0.9": true
+  },
+  "items": [
+    {
+      "question": "who do I call in an emergency on campus",
+      "evidence": "call 2222 on any University phone",
+      "slice": "simple",
+      "answer": "In an emergency on campus you should call 999 and also the Campus Support team by dialing 2222 on any University phone (or +44\u202f(0)151\u202f794\u202f2222 from a personal mobile).",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1,
+        2,
+        4
+      ],
+      "latency_ms": 1676,
+      "citation_hit": true,
+      "inline_citation": false,
+      "judge": {
+        "claims": [
+          {
+            "claim": "In an emergency on campus you should call 999",
+            "supported": true
+          },
+          {
+            "claim": "In an emergency on campus you should also call the Campus Support team",
+            "supported": true
+          },
+          {
+            "claim": "You can dial 2222 on any University phone to reach Campus Support",
+            "supported": true
+          },
+          {
+            "claim": "You can dial +44 (0)151 794 2222 from a personal mobile to reach Campus Support",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer accurately reflects the emergency contact information provided in the cited passages and matches the reference evidence."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "do I need a TV licence to watch TV in my room",
+      "evidence": "it is a legal requirement to obtain a television licence",
+      "slice": "simple",
+      "answer": "Yes, you must obtain a television licence to watch TV in your university bedroom or off\u2011campus room, and failure to do so can lead to a fine of up to \u00a31,000. [1]",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1
+      ],
+      "latency_ms": 19511,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "You must obtain a television licence to watch TV in your university bedroom or off-campus room.",
+            "supported": true
+          },
+          {
+            "claim": "Failure to do so can lead to a fine of up to \u00a31,000.",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer accurately reflects the legal requirement and penalty stated in the cited passage."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "my landlord wants proof I'm a student so I don't pay council tax",
+      "evidence": "Council Tax Student Certificate",
+      "slice": "simple",
+      "answer": "You can obtain a Council Tax Student Certificate by requesting it online through the Liverpool Life portal; it will be emailed to your university account within three working days, which you can then give to your landlord as proof of full\u2011time student status for council tax exemption [1].",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1
+      ],
+      "latency_ms": 20291,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "You can obtain a Council Tax Student Certificate by requesting it online through the Liverpool Life portal.",
+            "supported": true
+          },
+          {
+            "claim": "The certificate will be emailed to your university account within three working days.",
+            "supported": true
+          },
+          {
+            "claim": "You can give the certificate to your landlord as proof of full-time student status for council tax exemption.",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer accurately reflects the process and purpose described in the cited passage."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    }
+  ]
+}

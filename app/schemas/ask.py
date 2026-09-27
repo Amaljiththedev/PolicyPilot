@@ -25,6 +25,7 @@ class AskResponse(BaseModel):
     reason: str | None          # why it refused, if it did
     latency_ms: int
     model: str
+    prompt_version: str | None = None
 
 
 class FeedbackRequest(BaseModel):

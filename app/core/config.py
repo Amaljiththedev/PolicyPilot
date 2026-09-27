@@ -46,6 +46,8 @@ class Settings(BaseSettings):
 
     # Answering (Phase 8)
     ANSWER_TOP_K: int = 5
+    ANSWER_PROMPT: str = "v2"          # v1 | v2, see answer.py
+    JUDGE_MODEL: str = "qwen/qwen3-32b"   # eval judge: a different model from the answerer
 
     # Reranking
     RERANK_ENABLED: bool = False

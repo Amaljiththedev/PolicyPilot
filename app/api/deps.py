@@ -23,7 +23,13 @@ def get_current_user(
     token = creds.credentials
     try:
         sub = decode_access_token(token)
-        user = db.query(User).filter(User.id == sub).first()
+        # JWT "sub" is always a string ("8"); users.id is an integer.
+        # psycopg2 cast it silently, psycopg 3 doesn't, so convert explicitly.
+        try:
+            user_id = int(sub)
+        except (TypeError, ValueError):
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid authentication: bad subject")
+        user = db.query(User).filter(User.id == user_id).first()
         if user is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,

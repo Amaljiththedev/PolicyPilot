@@ -33,18 +33,20 @@ def _throttle() -> None:
     _last_call = time.time()
 
 
-def _extra_args(max_tokens: int) -> dict:
+def _extra_args(max_tokens: int, model: str) -> dict:
     """Model-specific settings. Reasoning models (gpt-oss) think before answering;
     without room for that, the visible answer comes back empty."""
-    model = settings.LLM_MODEL.lower()
+    model = model.lower()
     if "gpt-oss" in model:
         return {"max_tokens": max(max_tokens, 2000), "reasoning_effort": "low"}
     return {"max_tokens": max_tokens}
 
 
-def chat_json(prompt: str, max_tokens: int = 800, retries: int = 3) -> dict:
-    """Send a prompt, return the parsed JSON object. Raises after `retries` failures."""
-    if settings.LLM_NO_THINK and "qwen3" in settings.LLM_MODEL.lower():
+def chat_json(prompt: str, max_tokens: int = 800, retries: int = 3, model: str | None = None) -> dict:
+    """Send a prompt, return the parsed JSON object. Raises after `retries` failures.
+    `model` overrides LLM_MODEL (used by the eval judge, so it isn't the answer model)."""
+    model = model or settings.LLM_MODEL
+    if settings.LLM_NO_THINK and "qwen3" in model.lower():
         prompt += "\n/no_think"          # Qwen3 only: skip slow "thinking"
 
     STATS["calls"] += 1
@@ -53,11 +55,11 @@ def chat_json(prompt: str, max_tokens: int = 800, retries: int = 3) -> dict:
         _throttle()
         try:
             r = client.chat.completions.create(
-                model=settings.LLM_MODEL,
+                model=model,
                 messages=[{"role": "user", "content": prompt}],
                 response_format={"type": "json_object"},
                 temperature=0,           # same input -> same output, so evals are repeatable
-                **_extra_args(max_tokens),
+                **_extra_args(max_tokens, model),
             )
             text = r.choices[0].message.content or ""
             text = re.sub(r"<think>.*?</think>", "", text, flags=re.S)   # strip reasoning, if any

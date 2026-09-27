@@ -1,3 +1,4 @@
+from app.api.ingestion.titles import clean_title
 import hashlib
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
@@ -59,7 +60,7 @@ def upload_document(                      # plain def: embedding is CPU-heavy, r
     # 5. one transaction: document + all chunks, or nothing
     try:
         doc = Document(
-            title=file.filename,
+            title=clean_title(file.filename),
             filename=file.filename,
             content_type=file.content_type or "application/octet-stream",
             raw_text=text,

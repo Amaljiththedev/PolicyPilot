@@ -120,6 +120,24 @@ All runs: one document (UoL handbook), 30 answerable questions, recursive chunki
 
 **Current best:** a small English cross-encoder (22M parameters) fused with the vector ranking. The 120B-parameter LLM re-ranker, also fused, barely moved the numbers (MRR 0.876 to 0.894, strict R@1 unchanged) at far higher cost. It lifts MRR from 0.876 to 0.936 and lenient R@1 from 0.80 to 0.90 at about 0.5 s per query, while the larger multilingual re-ranker (278M) on its own made results worse. With 30 questions, differences of one or two questions are within noise, so these are directional results; a larger eval set is needed before treating the gains as settled.
 
+### Phase 7 ablation (clean chunks, with 95% bootstrap intervals)
+
+| Run | MRR (95% CI) | lenient R@1 | strict R@1 | nDCG@10 | median latency |
+|---|---|---|---|---|---|
+| Vector, 1000/200 chunks | 0.861 (0.77–0.95) | 0.767 | 0.567 | 0.854 | 31 ms |
+| Keyword only (Postgres full-text) | 0.581 (0.43–0.74) | 0.50 | 0.333 | 0.617 | 108 ms |
+| Hybrid (vector + keyword, RRF) | 0.766 (0.64–0.89) | 0.667 | 0.567 | 0.784 | 236 ms |
+| Hybrid + MiniLM | 0.824 (0.71–0.92) | 0.733 | 0.60 | 0.842 | 638 ms |
+| **Vector + MiniLM (chosen)** | **0.886 (0.80–0.96)** | **0.80** | **0.60** | **0.892** | 495 ms |
+| Vector, 500/100 chunks | 0.776 (0.66–0.88) | 0.633 | 0.467 | 0.826 | 27 ms |
+| Vector, 1500/300 chunks | 0.842 (0.72–0.95) | 0.80 | 0.533 | 0.829 | 104 ms |
+
+**Decision:** 1000-character chunks, footers stripped, vector search, MiniLM re-ranker fused with RRF.
+
+* **Hybrid search lost.** Keyword search alone scored 0.58: students ask in everyday words ("I was ill", "wrote our essays together", "sign up with a doctor") while the handbook uses formal terms ("extenuating circumstances", "collusion", "register with a GP"). Fusing equal-weight keyword ranks into the vector ranking pulled good results down. Hybrid stays in the code (`SEARCH_MODE=hybrid`) for corpora with codes and exact names.
+* **500-character chunks split conditional rules in half** (conditional-slice MRR fell to 0.60). 1500 found the evidence as often but ranked it first less reliably.
+* **The confidence intervals overlap.** With 30 questions, MiniLM's gain over plain vector search is directional, not proven. `evals/compare.py` runs a paired bootstrap on the same questions; a larger eval set is the fix.
+
 **Reading the baseline:** retrieval nearly always finds the right passage somewhere in the top 5, but puts it first only 60% of the time under strict matching. That gap is what re-ranking was meant to close.
 
 Answerable questions average a top similarity of 0.73 and unanswerable ones 0.66. The gap is small, so a similarity threshold alone won't be enough to decide when to say "I don't know". That feeds into the design of `/ask`.
@@ -213,6 +231,16 @@ Two search tests passed on an empty database and failed once the real handbook w
 
 A provider's free model started returning "402 payment required" partway through the build. Because the LLM is configured in `.env` rather than in code, switching to Groq (or local Ollama) was a three-line change.
 
+### 9. Phase 8: answers, and the bugs a new driver exposed
+
+`/ask` retrieves 5 passages, numbers them, and makes one LLM call that must answer only from them and cite `[n]`. Code then drops citation numbers that don't exist, and an answer with no valid citation becomes a refusal with `escalate: true`. Every question, the chunks used, the chunks cited, the refusal reason and latency are logged for feedback.
+
+Manual checks: a grounded answer (TV licence), an honest refusal ("company parental leave policy" was refused even though a passage about "leave" and "suspension" looked similar), and a conditional answer (illness during exams, with the 14-day rule). The pattern across them: **the model drops qualifiers** ("as it is being broadcast", "normally", "third-party evidence"), which matters for policy. Prompt v2 asks for them explicitly; `evals/run_answers.py` measures whether it works, with a judge from a different model family (Qwen) grading each claim so the answer model never grades itself.
+
+Moving into Docker pulled in SQLAlchemy 2.1, which uses psycopg 3 by default. That exposed two hidden bugs: a missing driver, and the JWT `sub` (always a string) being compared with the integer `users.id`, which psycopg2 had silently cast. The SQLite auth tests could never catch it, so there is now a test against real Postgres. Versions are pinned in `requirements.lock`.
+
+A test file that cleared FastAPI's dependency overrides made another file's tests run against the real database. Fixed by saving and restoring overrides per test.
+
 ---
 
 ## Next experiments
@@ -221,10 +249,10 @@ A provider's free model started returning "402 payment required" partway through
 2. **`BAAI/bge-reranker-v2-m3`:** newer and stronger, to check whether model quality or model size was the issue.
 3. ~~LLM listwise re-ranking~~: done. Possible follow-up: full chunk text instead of 600 characters, and 20 candidates, to test whether truncation held it back.
 4. ~~Strip page footers~~: done, see finding 1e. **Next:** grow the eval set (synthetic questions plus a second document) and report bootstrap confidence intervals, so small differences can be told apart from noise. Heading-aware chunking after that.
-5. **Hybrid search:** keyword plus vector search, for exact terms like clause numbers and phone numbers.
+5. ~~Hybrid search~~: done, lost on this corpus (see Phase 7 ablation).
 6. **More documents:** a single handbook makes retrieval easier than a real corpus would.
 
-Then: `/ask` with citations and abstention, answer-level metrics (faithfulness, false answer rate), policy versioning, Drive sync, Slack, deployment with the eval harness gating CI.
+Then: ~~`/ask` with citations and abstention~~ (built), answer-level metrics (running: `evals/run_answers.py`), policy versioning, Drive sync, Slack, deployment with the eval harness gating CI.
 
 ---
 
