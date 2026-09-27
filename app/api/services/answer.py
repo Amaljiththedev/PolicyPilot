@@ -78,6 +78,10 @@ Work in this order:
 
 Rules:
 - Use ONLY the numbered passages. No outside knowledge.
+- People ask in everyday words; policies use formal terms. Match on MEANING, not exact words:
+  "doctor's note" = fit note / medical certificate / Med 3; "holiday" = annual leave;
+  "off sick" = sickness absence; "boss" = line manager. If a passage answers the question in
+  formal terms, the question IS answerable.
 - If no sentence in the passages answers the question, set "answerable" to false, and leave
   "quote" and "answer" empty. A related-but-different topic is NOT an answer.
 - Keep the answer to 1-4 sentences, plain English.

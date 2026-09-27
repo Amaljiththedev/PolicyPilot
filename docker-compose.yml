@@ -37,6 +37,7 @@ services:
     volumes:
       - ./evals:/app/evals   # eval data in, result JSONs out, straight to your folder
       - ./corpus:/app/corpus:ro   # source documents, read-only
+      - ./app:/app/app:ro         # dev: code changes apply on restart, no rebuild (remove for production)
     extra_hosts:
       - "host.docker.internal:host-gateway"   # lets the container reach Ollama on your laptop
 
