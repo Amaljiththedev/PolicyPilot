@@ -102,6 +102,8 @@ def policy_changes(document_id: int) -> dict:
 def _warm_up():
     """Load the embedding + re-ranker models in the background at start-up, so the first
     real question isn't slowed by model loading (clients time out after ~60 s)."""
+    import time
+    time.sleep(10)          # let the client handshake finish first; loading competes for CPU
     try:
         from app.api.services.embeddings import warm_up
         from app.api.services.reranker import get_cross_encoder
