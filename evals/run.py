@@ -81,6 +81,8 @@ def main(name: str, rerank_strategy: str | None = None,
     for r in per_item:
         groups["ALL (answerable)" if r["slice"] != "unanswerable" else "unanswerable"].append(r)
         groups[f"{r['source']}:{r['slice']}"].append(r)
+        if r.get("doc") and r["slice"] != "unanswerable":
+            groups[f"doc:{r['doc']}"].append(r)          # per-document breakdown
 
     report = {}
     for g, rows in sorted(groups.items()):

@@ -1,0 +1,1025 @@
+{
+  "name": "answers_v2",
+  "kind": "answers",
+  "config": {
+    "prompt": "v2",
+    "answer_model": "openai/gpt-oss-120b",
+    "judge_model": "qwen/qwen3.8-27b",
+    "top_k": 5,
+    "rerank": "cross_fused"
+  },
+  "metrics": {
+    "n": 37,
+    "llm_errors": 5,
+    "unanswerable_refused": "7/7",
+    "false_refusals": "0/25",
+    "false_refusals_with_evidence_retrieved": 0,
+    "citation_accuracy": 1,
+    "inline_citations": 0.88,
+    "faithfulness": 0.94,
+    "faithfulness_95ci": [
+      0.84,
+      1.0
+    ],
+    "fully_faithful_answers": "23/25",
+    "correct": 22,
+    "partial": 2,
+    "wrong": 1,
+    "condition_kept": "6/7",
+    "latency_ms_median": 20071
+  },
+  "gates": {
+    "all unanswerable refused": true,
+    "false refusals <= 2": true,
+    "faithfulness >= 0.9": true,
+    "citation accuracy >= 0.9": true
+  },
+  "items": [
+    {
+      "question": "who do I call in an emergency on campus",
+      "evidence": "call 2222 on any University phone",
+      "slice": "simple",
+      "answer": "In an emergency on campus you should call 999 and also the Campus Support team by dialing 2222 on any University phone (or +44\u202f151\u202f794\u202f2222 from a mobile).",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1,
+        2,
+        4
+      ],
+      "latency_ms": 1477,
+      "citation_hit": true,
+      "inline_citation": false,
+      "judge": {
+        "claims": [
+          {
+            "claim": "In an emergency on campus you should call 999",
+            "supported": true
+          },
+          {
+            "claim": "In an emergency on campus you should call the Campus Support team by dialing 2222 on any University phone",
+            "supported": true
+          },
+          {
+            "claim": "In an emergency on campus you should call the Campus Support team by dialing +44 151 794 2222 from a mobile",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer correctly identifies the emergency numbers provided in the reference evidence and cited passages."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "do I need a TV licence to watch TV in my room",
+      "evidence": "it is a legal requirement to obtain a television licence",
+      "slice": "simple",
+      "answer": "Yes, you need a TV licence to watch TV in your room, as it is a legal requirement to obtain a television licence for viewing broadcast television in a university bedroom or off\u2011campus room [1].",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1
+      ],
+      "latency_ms": 20003,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "You need a TV licence to watch TV in your room.",
+            "supported": true
+          },
+          {
+            "claim": "It is a legal requirement to obtain a television licence for viewing broadcast television in a university bedroom or off-campus room.",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer correctly identifies the legal requirement based on the cited passage and reference evidence."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "my landlord wants proof I'm a student so I don't pay council tax",
+      "evidence": "Council Tax Student Certificate",
+      "slice": "simple",
+      "answer": "You can obtain a Council Tax Student Certificate by requesting it online through the Liverpool Life portal; it will be emailed to your university account within three working days, which you can then give to your landlord as proof of full\u2011time student status for council tax exemption [1].",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1
+      ],
+      "latency_ms": 20313,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "You can obtain a Council Tax Student Certificate by requesting it online through the Liverpool Life portal.",
+            "supported": true
+          },
+          {
+            "claim": "The certificate will be emailed to your university account within three working days.",
+            "supported": true
+          },
+          {
+            "claim": "You can give the certificate to your landlord as proof of full-time student status for council tax exemption.",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer accurately reflects the process and purpose described in the cited passage."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "I lost my student card how do I get a new one",
+      "evidence": "Replacement smart cards can be requested online",
+      "slice": "simple",
+      "error": "LLM call failed: RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01kzbrgtdpex8b4xwpjv6jt56v` service tier `on_demand` on tokens per day (TPD): Limit 200"
+    },
+    {
+      "question": "what counts as copying someone else's work",
+      "evidence": "Plagiarism occurs when a student misrepresents the work or ideas",
+      "slice": "simple",
+      "error": "LLM call failed: RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01kzbrgtdpex8b4xwpjv6jt56v` service tier `on_demand` on tokens per day (TPD): Limit 200"
+    },
+    {
+      "question": "how do I report harassment anonymously",
+      "evidence": "let us know anonymously",
+      "slice": "simple",
+      "error": "LLM call failed: RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01kzbrgtdpex8b4xwpjv6jt56v` service tier `on_demand` on tokens per day (TPD): Limit 200"
+    },
+    {
+      "question": "I was ill during exams can I get extra consideration",
+      "evidence": "Personal Exceptional Circumstances",
+      "slice": "conditional",
+      "error": "LLM call failed: RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01kzbrgtdpex8b4xwpjv6jt56v` service tier `on_demand` on tokens per day (TPD): Limit 200"
+    },
+    {
+      "question": "when does welcome week start",
+      "evidence": "Welcome Week Monday 15 September 2025 to Friday 19 September 2025",
+      "slice": "simple",
+      "error": "LLM call failed: RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01kzbrgtdpex8b4xwpjv6jt56v` service tier `on_demand` on tokens per day (TPD): Limit 200"
+    },
+    {
+      "question": "when is the spring break this year",
+      "evidence": "Spring Break Monday 23March 2026 to Friday 10 April 2026",
+      "slice": "simple",
+      "answer": "The spring break is scheduled for Monday 23\u202fMarch\u202f2026 to Friday 10\u202fApril\u202f2026 [1].",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1
+      ],
+      "latency_ms": 30098,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "The spring break is scheduled for Monday 23 March 2026 to Friday 10 April 2026",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer accurately reflects the dates provided in the reference evidence."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "when are graduation ceremonies",
+      "evidence": "Graduation 2026 Ceremonies Monday 13 July to Friday 17 July 2026",
+      "slice": "simple",
+      "answer": "The Graduation 2026 ceremonies are scheduled for Monday 13\u202fJuly to Friday 17\u202fJuly\u202f2026. [1]",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1
+      ],
+      "latency_ms": 3853,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "The Graduation 2026 ceremonies are scheduled for Monday 13 July to Friday 17 July 2026.",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer accurately reflects the dates provided in the reference evidence and cited passage."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "how much is the fine for watching TV without a licence",
+      "evidence": "failure to do so can lead to a fine of up to \u00a31,000",
+      "slice": "simple",
+      "answer": "The fine for watching TV without a licence can be up to \u00a31,000 [1].",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1
+      ],
+      "latency_ms": 20071,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "The fine for watching TV without a licence can be up to \u00a31,000",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer accurately reflects the maximum fine stated in the cited passage and reference evidence."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "how much does a TV licence cost",
+      "evidence": "The current cost of the TV licence is \u00a3169.50 for a standard licence",
+      "slice": "simple",
+      "answer": "The current cost of a standard TV licence is \u00a3169.50 [1].",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1
+      ],
+      "latency_ms": 20275,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "The current cost of a standard TV licence is \u00a3169.50",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer accurately reflects the cost stated in the cited passage and reference evidence."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "is there a cheap bus home late at night",
+      "evidence": "The N1 Night bus runs from Birkenhead to Allerton every Thursday",
+      "slice": "simple",
+      "answer": "The N1 Night bus runs from Birkenhead to Allerton on Thursday, Friday and Saturday throughout the night and costs \u00a32 per journey, offering a cheap option for getting home late at night.[1]",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1
+      ],
+      "latency_ms": 20374,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "The N1 Night bus runs from Birkenhead to Allerton",
+            "supported": true
+          },
+          {
+            "claim": "The N1 Night bus runs on Thursday, Friday and Saturday",
+            "supported": true
+          },
+          {
+            "claim": "The N1 Night bus runs throughout the night",
+            "supported": true
+          },
+          {
+            "claim": "The N1 Night bus costs \u00a32 per journey",
+            "supported": true
+          },
+          {
+            "claim": "The N1 Night bus offers a cheap option for getting home late at night",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer accurately reflects the details provided in the cited passage and matches the reference evidence."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "how much is a young persons railcard",
+      "evidence": "may be purchased for \u00a330 by anyone aged 16-25",
+      "slice": "simple",
+      "answer": "A Young Persons Railcard can be purchased for \u00a330 by anyone aged 16\u201125 or full\u2011time mature students. [1]",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1
+      ],
+      "latency_ms": 19783,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "A Young Persons Railcard can be purchased for \u00a330",
+            "supported": true
+          },
+          {
+            "claim": "It is available to anyone aged 16-25",
+            "supported": true
+          },
+          {
+            "claim": "It is available to full-time mature students",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer accurately reflects the price and eligibility criteria stated in the cited passage and reference evidence."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "do I need to sign up with a doctor in Liverpool",
+      "evidence": "it is important that you register with a local General Practitioner",
+      "slice": "simple",
+      "answer": "If you are living away from home you need to register with a local General Practitioner in Liverpool to ensure full medical care, although you may choose to register with the University Medical Practice if you live within its area. [2][3]",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        2,
+        3
+      ],
+      "latency_ms": 20032,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "If you are living away from home you need to register with a local General Practitioner in Liverpool to ensure full medical care",
+            "supported": true
+          },
+          {
+            "claim": "you may choose to register with the University Medical Practice if you live within its area",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer accurately reflects the reference evidence and cited passages regarding the importance of GP registration for students living away from home."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "is there a nursery for my child on campus",
+      "evidence": "The University\u2019s purpose-built nursery is located on campus",
+      "slice": "simple",
+      "answer": "Yes, the University has a purpose\u2011built nursery on campus operated by Kids in Bloom, offering flexible full\u2011 and part\u2011time childcare for babies and pre\u2011school children, with some term\u2011time places available for students [1][2].",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1,
+        2
+      ],
+      "latency_ms": 20053,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "The University has a purpose-built nursery on campus",
+            "supported": true
+          },
+          {
+            "claim": "The nursery is operated by Kids in Bloom",
+            "supported": true
+          },
+          {
+            "claim": "It offers flexible full- and part-time childcare for babies and pre-school children",
+            "supported": true
+          },
+          {
+            "claim": "Some term-time places are available for students",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer accurately reflects the reference evidence and cited passages regarding the on-campus nursery."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "what happens if I get called for jury duty",
+      "evidence": "From time to time students are called for jury service",
+      "slice": "conditional",
+      "answer": "If you are called for jury service you can apply for a deferral if it would interfere with your studies; you must complete the summons and send it to Student Life, who will request a deferral on your behalf, but the final decision rests with Her Majesty\u2019s Courts Service [1][2].",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1,
+        2
+      ],
+      "latency_ms": 20055,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "If you are called for jury service you can apply for a deferral if it would interfere with your studies",
+            "supported": true
+          },
+          {
+            "claim": "you must complete the summons and send it to Student Life",
+            "supported": true
+          },
+          {
+            "claim": "Student Life will request a deferral on your behalf",
+            "supported": true
+          },
+          {
+            "claim": "the final decision rests with Her Majesty\u2019s Courts Service",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": true,
+        "note": "The answer accurately reflects the conditional nature of the deferral process and the specific steps outlined in the cited passages."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": true,
+      "retrieval_hit": true
+    },
+    {
+      "question": "my friend and I wrote our essays together is that allowed",
+      "evidence": "two or more students consciously collaborate in the preparation and production of work",
+      "slice": "conditional",
+      "answer": "Collaborating with a friend to write essays together, resulting in identical or substantially similar submissions, is considered collusion and is not allowed.",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1
+      ],
+      "latency_ms": 20134,
+      "citation_hit": true,
+      "inline_citation": false,
+      "judge": {
+        "claims": [
+          {
+            "claim": "Collaborating with a friend to write essays together, resulting in identical or substantially similar submissions, is considered collusion.",
+            "supported": true
+          },
+          {
+            "claim": "Collaborating with a friend to write essays together, resulting in identical or substantially similar submissions, is not allowed.",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": true,
+        "note": "The answer correctly identifies the specific condition (identical/substantially similar submissions) that makes the collaboration prohibited."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": true,
+      "retrieval_hit": true
+    },
+    {
+      "question": "can I use ChatGPT to write my assignment",
+      "evidence": "generated or completed by Generative Artificial Intelligence (GAI) software",
+      "slice": "conditional",
+      "answer": "Using ChatGPT, which is generative AI software, to write your assignment is not permitted under the university's policy, as submitting work generated by such tools is considered dishonest and contrary to acceptable use guidelines [1][2].",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1,
+        2
+      ],
+      "latency_ms": 20288,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "Using ChatGPT, which is generative AI software, to write your assignment is not permitted under the university's policy",
+            "supported": false
+          },
+          {
+            "claim": "Submitting work generated by such tools is considered dishonest and contrary to acceptable use guidelines",
+            "supported": false
+          }
+        ],
+        "correctness": "wrong",
+        "condition_kept": false,
+        "note": "The answer incorrectly states that using GAI is not permitted, whereas the policy defines it as a violation only when done contrary to guidance, implying it may be permitted if allowed by the assignment brief."
+      },
+      "faithfulness": 0.0,
+      "correctness": "wrong",
+      "condition_kept": false,
+      "retrieval_hit": true
+    },
+    {
+      "question": "can the external examiner see my coursework",
+      "evidence": "External examiners have the right to see all assessed work from the modules they examine",
+      "slice": "simple",
+      "answer": "External examiners have the right to see all assessed work from the modules they examine, although for modules with large numbers of students they would normally see samples of work.[1]",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1
+      ],
+      "latency_ms": 20002,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "External examiners have the right to see all assessed work from the modules they examine",
+            "supported": true
+          },
+          {
+            "claim": "For modules with large numbers of students they would normally see samples of work",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer accurately reflects the cited passage and reference evidence."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "can I pay my tuition fees in instalments",
+      "evidence": "Payment of tuition fees can either be made in full or in instalment plans",
+      "slice": "conditional",
+      "answer": "Yes, you can pay your tuition fees in instalments, provided your level of study and fee status allow it, and you meet the instalment due dates. [1]",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1
+      ],
+      "latency_ms": 20286,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "You can pay your tuition fees in instalments.",
+            "supported": true
+          },
+          {
+            "claim": "This is provided your level of study and fee status allow it.",
+            "supported": true
+          },
+          {
+            "claim": "You must meet the instalment due dates.",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": true,
+        "note": "The answer correctly identifies the possibility of instalment payments and includes the specific conditions regarding study level, fee status, and due dates found in the source."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": true,
+      "retrieval_hit": true
+    },
+    {
+      "question": "what if I'm too ill to ever resit my exams",
+      "evidence": "a Board of Examiners may award an aegrotat degree",
+      "slice": "conditional",
+      "answer": "If your ongoing ill\u2011health means you cannot resit any missed or affected assessments, the Board of Examiners may award you an aegrotat degree, provided you are in the final year of a non\u2011clinical undergraduate programme (or the appropriate year of an Integrated Masters) [4].",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        4
+      ],
+      "latency_ms": 20291,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "If ongoing ill-health means you cannot resit assessments, the Board of Examiners may award an aegrotat degree.",
+            "supported": true
+          },
+          {
+            "claim": "The student must be in the final year of a non-clinical undergraduate programme.",
+            "supported": true
+          },
+          {
+            "claim": "The student must be in the appropriate year of an Integrated Masters.",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": true,
+        "note": "The answer correctly identifies the aegrotat degree option and includes the specific eligibility conditions regarding programme type and year of study."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": true,
+      "retrieval_hit": true
+    },
+    {
+      "question": "I want to complain about my course where do I start",
+      "evidence": "The majority of complaints can be resolved within the area in which a student has a concern",
+      "slice": "simple",
+      "answer": "First check the Student Charter to see what you can reasonably expect, then raise your concern informally with the person responsible for the course or their line manager (Early Resolution) [1][2]. If that does not resolve the issue, you can submit a formal complaint as set out in the Student Complaints Policy [4].",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1,
+        2,
+        4
+      ],
+      "latency_ms": 20163,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "First check the Student Charter to see what you can reasonably expect",
+            "supported": true
+          },
+          {
+            "claim": "Raise your concern informally with the person responsible for the course or their line manager (Early Resolution)",
+            "supported": true
+          },
+          {
+            "claim": "If that does not resolve the issue, you can submit a formal complaint as set out in the Student Complaints Policy",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer correctly identifies the Early Resolution step as the starting point, aligning with the reference evidence that most complaints are resolved informally."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "where is the Student Life Centre",
+      "evidence": "The Student Life Centre located in the Alsop Building",
+      "slice": "simple",
+      "answer": "The Student Life Centre is located in the Alsop Building, University Square, Liverpool.",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1
+      ],
+      "latency_ms": 19860,
+      "citation_hit": true,
+      "inline_citation": false,
+      "judge": {
+        "claims": [
+          {
+            "claim": "The Student Life Centre is located in the Alsop Building, University Square, Liverpool.",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer accurately reflects the location details provided in the cited passage and reference evidence."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "what happens if I don't complete registration as an international student",
+      "evidence": "reporting their nonattendance to the UK Home Office",
+      "slice": "conditional",
+      "answer": "If you do not complete academic and financial registration, the University will report your non\u2011attendance to the UK Home Office, which can affect your immigration status as an international student [2].",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        2
+      ],
+      "latency_ms": 20575,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "If you do not complete academic and financial registration, the University will report your non-attendance to the UK Home Office",
+            "supported": true
+          },
+          {
+            "claim": "Reporting non-attendance to the UK Home Office can affect your immigration status as an international student",
+            "supported": false
+          }
+        ],
+        "correctness": "partial",
+        "condition_kept": true,
+        "note": "The answer correctly identifies the consequence stated in the text but adds an unsupported inference about immigration status."
+      },
+      "faithfulness": 0.5,
+      "correctness": "partial",
+      "condition_kept": true,
+      "retrieval_hit": true
+    },
+    {
+      "question": "can I take a break from my studies for health reasons",
+      "evidence": "sort out other problems without financial or academic penalty before you return and restart your studies",
+      "slice": "conditional",
+      "answer": "Yes, you may interrupt your studies for ill\u2011health, which suspends your fee liability and assessment requirements, allowing you to take time out without academic or financial penalty, provided you submit the proper form and obtain approval from your School/Department. [1][2][3]",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1,
+        2,
+        3
+      ],
+      "latency_ms": 20743,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "You may interrupt your studies for ill-health.",
+            "supported": true
+          },
+          {
+            "claim": "Interrupting studies for ill-health suspends your fee liability.",
+            "supported": true
+          },
+          {
+            "claim": "Interrupting studies for ill-health suspends your assessment requirements.",
+            "supported": true
+          },
+          {
+            "claim": "You can take time out without academic or financial penalty.",
+            "supported": true
+          },
+          {
+            "claim": "You must submit the proper form.",
+            "supported": true
+          },
+          {
+            "claim": "You must obtain approval from your School/Department.",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": true,
+        "note": "The answer correctly identifies the right to interrupt for health reasons and includes the necessary procedural conditions (forms/approval) to ensure no penalty."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": true,
+      "retrieval_hit": true
+    },
+    {
+      "question": "where can I talk to someone about my mental health",
+      "evidence": "the Mental Health Advisory Service",
+      "slice": "simple",
+      "answer": "You can talk to someone about your mental health by completing the quick triage form to contact the Wellbeing Team, which connects you with the Student Advice and Guidance team and Wellbeing Practitioners, Psychological Therapists and Mental Health Advisors [1]. You can also access support by completing the referral form or emailing advice@liv.ac.uk for a confidential conversation [4].",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1,
+        4
+      ],
+      "latency_ms": 19970,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "You can talk to someone about your mental health by completing the quick triage form to contact the Wellbeing Team.",
+            "supported": true
+          },
+          {
+            "claim": "The triage form connects you with the Student Advice and Guidance team and Wellbeing Practitioners, Psychological Therapists and Mental Health Advisors.",
+            "supported": true
+          },
+          {
+            "claim": "You can access support by completing the referral form.",
+            "supported": true
+          },
+          {
+            "claim": "You can email advice@liv.ac.uk for a confidential conversation.",
+            "supported": true
+          }
+        ],
+        "correctness": "partial",
+        "condition_kept": null,
+        "note": "The answer provides valid contact methods from the cited passages but fails to explicitly name the 'Mental Health Advisory Service' specified in the reference evidence."
+      },
+      "faithfulness": 1.0,
+      "correctness": "partial",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "can students disagree about controversial topics at the university",
+      "evidence": "to think critically and to disagree well",
+      "slice": "simple",
+      "answer": "Yes, students are encouraged to think critically and to disagree well, including about contentious topics [2].",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        2
+      ],
+      "latency_ms": 19748,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "Students are encouraged to think critically and to disagree well, including about contentious topics.",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer accurately reflects the reference evidence and is fully supported by the cited passage."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "can I expense a taxi after 9pm",
+      "evidence": "",
+      "slice": "unanswerable",
+      "answer": "I couldn't find this in the policy documents. I've flagged it so someone from the team can help.",
+      "answered": false,
+      "reason": "model_said_unanswerable",
+      "citations": [],
+      "latency_ms": 20176
+    },
+    {
+      "question": "what is the company parental leave policy",
+      "evidence": "",
+      "slice": "unanswerable",
+      "answer": "I couldn't find this in the policy documents. I've flagged it so someone from the team can help.",
+      "answered": false,
+      "reason": "model_said_unanswerable",
+      "citations": [],
+      "latency_ms": 19867
+    },
+    {
+      "question": "how do I get on the wifi with my laptop",
+      "evidence": "connect to the University\u2019s free Wi-Fi service",
+      "slice": "simple",
+      "answer": "Visit wifi.liverpool.ac.uk to connect your laptop to the University\u2019s free Wi\u2011Fi service, and you can also use the eduroam network for personal devices [1][2].",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        1,
+        2
+      ],
+      "latency_ms": 20143,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "Visit wifi.liverpool.ac.uk to connect your laptop to the University\u2019s free Wi\u2011Fi service",
+            "supported": true
+          },
+          {
+            "claim": "You can also use the eduroam network for personal devices",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer correctly identifies the URL and the eduroam network as per the cited passages and reference evidence."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "how much does a parking permit cost for students per year",
+      "evidence": "",
+      "slice": "unanswerable",
+      "answer": "I couldn't find this in the policy documents. I've flagged it so someone from the team can help.",
+      "answered": false,
+      "reason": "model_said_unanswerable",
+      "citations": [],
+      "latency_ms": 19660
+    },
+    {
+      "question": "what mark do I need to pass a first year module",
+      "evidence": "Levels 4, 5 and 6 all carry a pass mark of 40%",
+      "slice": "simple",
+      "answer": "You need to achieve at least 40% in a first\u2011year module to pass it [2][5].",
+      "answered": true,
+      "reason": null,
+      "citations": [
+        2,
+        5
+      ],
+      "latency_ms": 20480,
+      "citation_hit": true,
+      "inline_citation": true,
+      "judge": {
+        "claims": [
+          {
+            "claim": "You need to achieve at least 40% in a first-year module to pass it",
+            "supported": true
+          }
+        ],
+        "correctness": "correct",
+        "condition_kept": null,
+        "note": "The answer correctly identifies the 40% pass mark for first-year (Level 4) modules as stated in the cited passages."
+      },
+      "faithfulness": 1.0,
+      "correctness": "correct",
+      "condition_kept": null,
+      "retrieval_hit": true
+    },
+    {
+      "question": "how many days holiday do university staff get",
+      "evidence": "",
+      "slice": "unanswerable",
+      "answer": "I couldn't find this in the policy documents. I've flagged it so someone from the team can help.",
+      "answered": false,
+      "reason": "model_said_unanswerable",
+      "citations": [],
+      "latency_ms": 20530
+    },
+    {
+      "question": "can I bring my dog into halls of residence",
+      "evidence": "",
+      "slice": "unanswerable",
+      "answer": "I couldn't find this in the policy documents. I've flagged it so someone from the team can help.",
+      "answered": false,
+      "reason": "model_said_unanswerable",
+      "citations": [],
+      "latency_ms": 19572
+    },
+    {
+      "question": "what time does the library close on Sundays",
+      "evidence": "",
+      "slice": "unanswerable",
+      "answer": "I couldn't find this in the policy documents. I've flagged it so someone from the team can help.",
+      "answered": false,
+      "reason": "model_said_unanswerable",
+      "citations": [],
+      "latency_ms": 19934
+    },
+    {
+      "question": "how much is the student gym membership per month",
+      "evidence": "",
+      "slice": "unanswerable",
+      "answer": "I couldn't find this in the policy documents. I've flagged it so someone from the team can help.",
+      "answered": false,
+      "reason": "model_said_unanswerable",
+      "citations": [],
+      "latency_ms": 19989
+    }
+  ]
+}

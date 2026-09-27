@@ -36,6 +36,7 @@ services:
         condition: service_healthy
     volumes:
       - ./evals:/app/evals   # eval data in, result JSONs out, straight to your folder
+      - ./corpus:/app/corpus:ro   # source documents, read-only
     extra_hosts:
       - "host.docker.internal:host-gateway"   # lets the container reach Ollama on your laptop
 
