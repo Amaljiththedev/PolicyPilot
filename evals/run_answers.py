@@ -25,7 +25,7 @@ from app.api.services.answer import answer_question
 from app.api.services.llm import STATS, chat_json
 from app.core.config import get_settings
 from app.db.session import SessionLocal
-from evals.metrics import is_hit
+from evals.metrics import _norm, is_hit
 from evals.run import bootstrap_ci
 
 DATA = Path(__file__).parent / "data"
@@ -138,7 +138,8 @@ def main(name: str, prompt: str | None, top_k: int | None, limit: int | None, no
                 row["correctness"] = j.get("correctness")
                 row["condition_kept"] = j.get("condition_kept") if it["slice"] == "conditional" else None
         if answerable:
-            row["retrieval_hit"] = any(is_hit(x["text"], it["evidence"]) for x in res["sources"])
+            # strict: the exact evidence text reached the model (lenient word-overlap overstated this)
+            row["retrieval_hit"] = any(_norm(it["evidence"]) in _norm(x["text"]) for x in res["sources"])
 
         flag = ("ANSWERED" if res["answerable"] else "refused ")
         ok = (res["answerable"] == answerable)

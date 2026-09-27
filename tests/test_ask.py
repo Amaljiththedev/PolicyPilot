@@ -164,3 +164,12 @@ def test_v3_real_quote_is_answered():
 def test_quote_check_tolerates_hyphenation_differences():
     passage = "any absence of more than 4 days to be certified by a 'selfcertification form' (Form SC2)."
     assert ans.quote_in_passages("absence of more than 4 days to be certified by a self-certification form", [passage])
+
+
+def test_merge_drops_repeated_overlap():
+    assert ans._merge("alpha beta gamma delta epsilon zeta eta", "delta epsilon zeta eta theta iota") == \
+        "alpha beta gamma delta epsilon zeta eta theta iota"
+
+
+def test_no_db_means_no_expansion():
+    assert ans.expand_with_neighbours(None, HITS, 1) == [h["text"] for h in HITS]

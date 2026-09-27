@@ -10,11 +10,13 @@ and an answer with no valid citation is turned into a refusal + escalation.
 import re
 import time
 
+from sqlalchemy import select, tuple_
 from sqlalchemy.orm import Session
 
 from app.api.services.llm import chat_json
 from app.api.services.retrieval import search_chunks
 from app.core.config import get_settings
+from app.db.models import Chunk
 
 settings = get_settings()
 
@@ -132,15 +134,49 @@ def check_citations(answer: str, cited: list, n_passages: int) -> tuple[str, lis
     return re.sub(r"\s{2,}", " ", clean).strip(), good
 
 
+def _merge(a: str, b: str) -> str:
+    """Join two consecutive chunks, dropping the overlap the splitter repeated."""
+    for k in range(min(len(a), len(b), 400), 20, -1):
+        if a.endswith(b[:k]):
+            return a + b[k:]
+    return a + "\n" + b
+
+
+def expand_with_neighbours(db, hits: list[dict], n: int) -> list[str]:
+    """Give the LLM each retrieved chunk together with the chunk(s) just before and after it.
+    A rule is often split across a chunk boundary, or sits in a short chunk that ranks low:
+    the sick-note rule ("more than 4 days ... more than a week") lived in the chunk right
+    before the one that was retrieved."""
+    if n <= 0 or db is None or not hits:
+        return [h["text"] for h in hits]
+    wanted = {(h["document_id"], h["chunk_index"] + d) for h in hits for d in range(-n, n + 1)}
+    rows = db.execute(select(Chunk.document_id, Chunk.chunk_index, Chunk.text)
+                      .where(tuple_(Chunk.document_id, Chunk.chunk_index).in_(list(wanted)))).all()
+    by_pos = {(d, i): t for d, i, t in rows}
+    out = []
+    for h in hits:
+        text = h["text"]
+        for d in range(1, n + 1):
+            before = by_pos.get((h["document_id"], h["chunk_index"] - d))
+            after = by_pos.get((h["document_id"], h["chunk_index"] + d))
+            if before:
+                text = _merge(before, text)
+            if after:
+                text = _merge(text, after)
+        out.append(text)
+    return out
+
+
 def answer_question(db: Session, question: str, top_k: int | None = None,
                     prompt_version: str | None = None, organisation: str | None = None) -> dict:
     k = top_k or settings.ANSWER_TOP_K
     template = PROMPTS[prompt_version or settings.ANSWER_PROMPT]
     t0 = time.perf_counter()
     hits = search_chunks(db, question, k, organisation=organisation)
+    texts = expand_with_neighbours(db, hits, settings.ANSWER_NEIGHBOURS)
     sources = [{"n": i, "chunk_id": h["chunk_id"], "document_id": h["document_id"],
-                "document_title": h["document_title"], "text": h["text"]}
-               for i, h in enumerate(hits, 1)]
+                "document_title": h["document_title"], "text": t}
+               for i, (h, t) in enumerate(zip(hits, texts), 1)]
 
     result = {"question": question, "answer": REFUSAL, "answerable": False, "escalate": True,
               "citations": [], "sources": sources, "reason": None}
@@ -148,7 +184,7 @@ def answer_question(db: Session, question: str, top_k: int | None = None,
     if not hits:
         result["reason"] = "no_passages"
     else:
-        out = chat_json(template.format(question=question, passages=_format_passages(hits)),
+        out = chat_json(template.format(question=question, passages=_format_passages([{**h, "text": src["text"]} for h, src in zip(hits, sources)])),
                         max_tokens=800)
         text = str(out.get("answer") or "")
         clean, cites = check_citations(text, out.get("citations") or [], len(hits))
@@ -159,7 +195,7 @@ def answer_question(db: Session, question: str, top_k: int | None = None,
             result["reason"] = "model_said_unanswerable"
         elif not cites:
             result["reason"] = "no_valid_citations"      # an uncited answer is an unsupported answer
-        elif template is PROMPT_V3 and not quote_in_passages(quote, [h["text"] for h in hits]):
+        elif template is PROMPT_V3 and not quote_in_passages(quote, [src["text"] for src in sources]):
             result["reason"] = "quote_not_in_sources"    # it claimed wording the documents don't contain
         else:
             result.update(answer=clean, answerable=True, escalate=False, citations=cites)
