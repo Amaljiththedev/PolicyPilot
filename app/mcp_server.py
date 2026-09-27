@@ -49,7 +49,7 @@ def ask_policy(question: str, organisation: str | None = None) -> dict:
         r = answer_question(db, question, organisation=organisation)
         q = log_query(db, r, _mcp_user_id(db), source="mcp")
         return {"query_id": q.id, "answer": r["answer"], "answerable": r["answerable"],
-                "escalate": r["escalate"],
+                "escalate": r["escalate"], "reason": r["reason"], "quote": r.get("quote"),
                 "sources": [{"n": s["n"], "document": s["document_title"], "text": s["text"]}
                             for s in r["sources"] if s["n"] in r["citations"]]}
     finally:

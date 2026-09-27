@@ -159,3 +159,8 @@ def test_v3_real_quote_is_answered():
     with patch.object(ans, "search_chunks", return_value=HITS), patch.object(ans, "chat_json", return_value=out):
         r = answer_question(None, "q", prompt_version="v3")
     assert r["answerable"] and r["quote"].startswith("A TV licence")
+
+
+def test_quote_check_tolerates_hyphenation_differences():
+    passage = "any absence of more than 4 days to be certified by a 'selfcertification form' (Form SC2)."
+    assert ans.quote_in_passages("absence of more than 4 days to be certified by a self-certification form", [passage])

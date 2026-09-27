@@ -97,13 +97,18 @@ PROMPTS = {"v1": PROMPT_V1, "v2": PROMPT_V2, "v3": PROMPT_V3}
 _WORDS = re.compile(r"[a-z0-9£$%]+")
 
 
+def _squash(text: str) -> str:
+    return re.sub(r"[^a-z0-9£$%]", "", text.lower())
+
+
 def quote_in_passages(quote: str, passages: list[str]) -> bool:
-    """True if the quote's words appear, in order and contiguously, in one of the passages.
-    Word-level matching ignores case, punctuation, curly quotes and PDF line-break hyphens."""
-    q = " ".join(_WORDS.findall(quote.lower()))
-    if len(q.split()) < 3:
+    """True if the quote appears in one of the passages, ignoring case, spaces and punctuation.
+    Comparing letters only means PDF quirks don't cause false failures: "self-certification"
+    vs "selfcertification", "e-\ncigarettes" vs "e-cigarettes", curly vs straight quotes."""
+    q = _squash(quote)
+    if len(_WORDS.findall(quote.lower())) < 3 or len(q) < 15:
         return False
-    return any(q in " ".join(_WORDS.findall(p.lower())) for p in passages)
+    return any(q in _squash(p) for p in passages)
 
 CITE = re.compile(r"\[(\d+)\]")
 
