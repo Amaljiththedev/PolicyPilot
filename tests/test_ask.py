@@ -135,3 +135,27 @@ def test_feedback_unknown_query_is_404(client):
 
 def test_ask_without_token_is_401():
     assert TestClient(app).post("/api/v1/ask", json={"question": "q"}).status_code == 401
+
+
+# ---------- v3: quote first, verified in code ----------
+def test_quote_check_matches_across_pdf_line_breaks():
+    passage = "Smoking (which includes the use of e-\ncigarettes and personal vaporisers) is prohibited."
+    assert ans.quote_in_passages("which includes the use of e-cigarettes and personal vaporisers", [passage])
+    assert not ans.quote_in_passages("vaping is allowed in the office", [passage])
+    assert not ans.quote_in_passages("is", [passage])          # too short to prove anything
+
+
+def test_v3_invented_quote_is_refused():
+    out = {"answerable": True, "answer": "No note needed [1].", "citations": [1],
+           "quote": "You never need a fit note"}
+    with patch.object(ans, "search_chunks", return_value=HITS), patch.object(ans, "chat_json", return_value=out):
+        r = answer_question(None, "q", prompt_version="v3")
+    assert not r["answerable"] and r["reason"] == "quote_not_in_sources"
+
+
+def test_v3_real_quote_is_answered():
+    out = {"answerable": True, "answer": "Yes, for live TV [1].", "citations": [1],
+           "quote": "A TV licence is needed to watch live TV."}
+    with patch.object(ans, "search_chunks", return_value=HITS), patch.object(ans, "chat_json", return_value=out):
+        r = answer_question(None, "q", prompt_version="v3")
+    assert r["answerable"] and r["quote"].startswith("A TV licence")

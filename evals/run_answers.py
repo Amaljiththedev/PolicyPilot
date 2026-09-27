@@ -75,10 +75,14 @@ def judge(item: dict, res: dict, judge_model: str) -> dict:
         return {"error": str(e)}
 
 
-def main(name: str, prompt: str | None, top_k: int | None, limit: int | None, no_judge: bool):
+def main(name: str, prompt: str | None, top_k: int | None, limit: int | None, no_judge: bool,
+         only: str | None = None):
     s = get_settings()
     prompt = prompt or s.ANSWER_PROMPT
-    items = load_golden()[:limit] if limit else load_golden()
+    items = load_golden()
+    if only:
+        items = [it for it in items if only.lower() in it["question"].lower()]
+    items = items[:limit] if limit else items
     db = SessionLocal()
     # checkpoint: every finished question is appended here, so a crash or the daily
     # rate limit doesn't throw away 20 minutes of work. Re-run the same --name to resume.
@@ -198,9 +202,10 @@ def main(name: str, prompt: str | None, top_k: int | None, limit: int | None, no
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--name", default="answers")
-    p.add_argument("--prompt", choices=("v1", "v2"), default=None)
+    p.add_argument("--prompt", choices=("v1", "v2", "v3"), default=None)
     p.add_argument("--top-k", type=int, default=None)
     p.add_argument("--limit", type=int, default=None, help="only the first N questions (smoke test)")
+    p.add_argument("--only", default=None, help="only questions containing this text, e.g. \"doctor\"")
     p.add_argument("--no-judge", action="store_true", help="skip the LLM judge (half the calls)")
     a = p.parse_args()
-    main(a.name, a.prompt, a.top_k, a.limit, a.no_judge)
+    main(a.name, a.prompt, a.top_k, a.limit, a.no_judge, a.only)
